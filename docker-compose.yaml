@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  weather-api:
+    build: .
+    container_name: weather_api
+    ports:
+      - "8080:8080"
+    environment:
+      - OPENWEATHER_API_KEY=${d59cfe8cb6e6d6f23b2eee3625f1e8d2}
+
