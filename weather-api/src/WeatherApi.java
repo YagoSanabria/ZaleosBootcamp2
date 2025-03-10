@@ -49,20 +49,31 @@ public class WeatherApi {
                     }
                     in.close();
 
+                    //System.out.println("API Response: " + response.toString());
                     // Convertir la respuesta a un JSONObject
                     JSONObject jsonResponse = new JSONObject(response.toString());
 
                     // Extraer los datos del JSON
                     String cityName = jsonResponse.getString("name");
+                    String country = jsonResponse.getJSONObject("sys").getString("country");
                     double temperature = jsonResponse.getJSONObject("main").getDouble("temp");
+
+                    double tempLike = jsonResponse.getJSONObject("main").getDouble("feels_like");
+
                     double humidity = jsonResponse.getJSONObject("main").getDouble("humidity");
-                    String weatherDescription = jsonResponse.getJSONArray("weather").getJSONObject(0).getString("description");
+                    String weatherDescription = jsonResponse.getJSONArray("weather").getJSONObject(0).getString("main") + ", " + jsonResponse.getJSONArray("weather").getJSONObject(0).getString("description");
+
+                    double coordX = jsonResponse.getJSONObject("coord").getDouble("lat");
+                    double coordY = jsonResponse.getJSONObject("coord").getDouble("lon");
+
+                    String coordXtxt = (coordX < 0) ? Math.abs(coordX) + "S" : coordX + "N";
+                    String coordYtxt = (coordY < 0) ? Math.abs(coordY) + "W" : coordY + "E";
 
                     // Mostrar el resultado de forma más legible
-                    System.out.println("Weather en " + cityName + ":");
-                    System.out.println("Description: " + weatherDescription);
-                    System.out.println("Temperature: " + temperature + "°C");
-                    System.out.println("Humidity: " + humidity + "%\n");
+                    System.out.println("\nWeather in " + cityName + "(" + country + "), " + "(" + coordXtxt + "," + coordYtxt + "):");
+                    System.out.println("\tDescription: " + weatherDescription);
+                    System.out.println("\tTemperature: " + temperature + "°C, feels like " + tempLike + "°C");
+                    System.out.println("\tHumidity: " + humidity + "%\n");
 
                 } else {
                     System.out.println("Error in request. Response code: " + status);
