@@ -3,14 +3,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.json.JSONObject; // Necesitarás agregar esta librería si usas esta opción
 import java.util.Scanner;
+
+import org.json.JSONObject;
 
 public class WeatherApi {
 
     public static void main(String[] args) {
-        String apiKey = "d59cfe8cb6e6d6f23b2eee3625f1e8d2";  // Sustituye con tu propia clave de API
-        String city = "Madrid";  // Cambia a la ciudad que quieras
+        String apiKey = "d59cfe8cb6e6d6f23b2eee3625f1e8d2";
+        String city = "Madrid";  //Default city
         Scanner scanner = new Scanner(System.in);
         while (true) {
 
@@ -19,6 +20,8 @@ public class WeatherApi {
 
             if (city.equals("exit")) {
                 break;
+            } else if (city.equals("")) {
+                continue;
             }
 
             city = city.replace(" ", "%20");
@@ -26,19 +29,18 @@ public class WeatherApi {
             String apiUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
             //System.out.println("API URL: " + apiUrl);
             try {
-                // Crear una URL con la URL de la API
                 URL url = new URL(apiUrl);
 
-                // Abrir una conexión HTTP a la URL
+                //open http connection
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);  // Timeout de conexión de 5 segundos
                 connection.setReadTimeout(5000);  // Timeout de lectura de 5 segundos
 
-                // Obtener el código de respuesta HTTP
+                //http response code
                 int status = connection.getResponseCode();
 
-                // Si la respuesta es exitosa (código 200), leer la respuesta
+                //all ok (code 200)
                 if (status == 200) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String inputLine;
@@ -50,10 +52,9 @@ public class WeatherApi {
                     in.close();
 
                     //System.out.println("API Response: " + response.toString());
-                    // Convertir la respuesta a un JSONObject
                     JSONObject jsonResponse = new JSONObject(response.toString());
 
-                    // Extraer los datos del JSON
+                    //Get data from json
                     String cityName = jsonResponse.getString("name");
                     String country = jsonResponse.getJSONObject("sys").getString("country");
                     double temperature = jsonResponse.getJSONObject("main").getDouble("temp");
@@ -69,7 +70,7 @@ public class WeatherApi {
                     String coordXtxt = (coordX < 0) ? Math.abs(coordX) + "S" : coordX + "N";
                     String coordYtxt = (coordY < 0) ? Math.abs(coordY) + "W" : coordY + "E";
 
-                    // Mostrar el resultado de forma más legible
+                    //Print data in terminal
                     System.out.println("\nWeather in " + cityName + "(" + country + "), " + "(" + coordXtxt + "," + coordYtxt + "):");
                     System.out.println("\tDescription: " + weatherDescription);
                     System.out.println("\tTemperature: " + temperature + "°C, feels like " + tempLike + "°C");
@@ -79,7 +80,7 @@ public class WeatherApi {
                     System.out.println("Error in request. Response code: " + status);
                 }
 
-                // Cerrar la conexión
+                //close connection
                 connection.disconnect();
 
             } catch (Exception e) {
