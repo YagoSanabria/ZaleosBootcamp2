@@ -59,13 +59,13 @@ public class WeatherApi {
                     String weatherDescription = jsonResponse.getJSONArray("weather").getJSONObject(0).getString("description");
 
                     // Mostrar el resultado de forma más legible
-                    System.out.println("Clima en " + cityName + ":");
-                    System.out.println("Descripción: " + weatherDescription);
-                    System.out.println("Temperatura: " + temperature + "°C");
-                    System.out.println("Humedad: " + humidity + "%");
+                    System.out.println("Weather en " + cityName + ":");
+                    System.out.println("Description: " + weatherDescription);
+                    System.out.println("Temperature: " + temperature + "°C");
+                    System.out.println("Humidity: " + humidity + "%\n");
 
                 } else {
-                    System.out.println("Error en la solicitud. Código de respuesta: " + status);
+                    System.out.println("Error in request. Response code: " + status);
                 }
 
                 // Cerrar la conexión
@@ -77,5 +77,6 @@ public class WeatherApi {
         }
 
         scanner.close();
+        System.out.println("Exiting program...");
     }
 }
