@@ -13,11 +13,13 @@ public class WeatherApi {
         String apiKey = "a";
         String city = "Madrid";  //Default city
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Insert apikey: ");
-        apiKey = scanner.nextLine();
+
+        apiKey = System.getenv("API_KEY");
+
+
         while (true) {
 
-            System.out.print("Insert city name (exit to quit): ");
+            System.out.print("\nInsert city or country name (exit to quit): ");
             city = scanner.nextLine();
 
             if (city.equals("exit")) {
@@ -76,7 +78,7 @@ public class WeatherApi {
                     System.out.println("\nWeather in " + cityName + "(" + country + "), " + "(" + coordXtxt + "," + coordYtxt + "):");
                     System.out.println("\tDescription: " + weatherDescription);
                     System.out.println("\tTemperature: " + temperature + "°C, feels like " + tempLike + "°C");
-                    System.out.println("\tHumidity: " + humidity + "%\n");
+                    System.out.println("\tHumidity: " + humidity + "%");
 
                 } else {
                     System.out.println("Error in request. Response code: " + status);
