@@ -6,9 +6,13 @@ import java.net.URL;
 import java.util.Scanner;
 import org.json.JSONObject;
 
+
 public class WeatherApi {
 
     public static void main(String[] args) {
+
+        final double KELVIN = 273.15;
+
         // Usar el API de tu servidor local
         String apiUrl = "http://localhost:8080/api"; // Cambia esta URL si es necesario
         Scanner scanner = new Scanner(System.in);
@@ -24,12 +28,11 @@ public class WeatherApi {
             } else if (city.equals("")) {
                 continue;
             }else{
-                direccion = apiUrl+city;
+                direccion = apiUrl+city.replaceAll(" ", "");
             }
 
             try {
 
-                System.out.println(direccion);
                 URL url = new URL(direccion);
 
                 // Abrir conexión HTTP
@@ -52,15 +55,32 @@ public class WeatherApi {
                     }
                     in.close();
 
-                    System.out.println("Respuesta llega");
-
-
+                    
                     // Aquí se maneja la respuesta JSON de tu API
                     JSONObject jsonResponse = new JSONObject(response.toString());
 
-                    // Imprimir los datos recibidos de tu API
-                    System.out.println("\nWeather data received from local API:");
-                    System.out.println(jsonResponse.toString(4));  // Imprime el JSON formateado con una indentación de 4 espacios
+                    ///Get data from json
+                    String cityName = jsonResponse.getString("name");
+                    String country = jsonResponse.getJSONObject("sys").getString("country");
+                    double temperature = jsonResponse.getJSONObject("main").getDouble("temp") - KELVIN;
+
+                    double tempLike = jsonResponse.getJSONObject("main").getDouble("feels_like")- KELVIN;
+
+                    double humidity = jsonResponse.getJSONObject("main").getDouble("humidity");
+                    String weatherDescription = jsonResponse.getJSONArray("weather").getJSONObject(0).getString("main") + ", " + jsonResponse.getJSONArray("weather").getJSONObject(0).getString("description");
+
+                    double coordX = jsonResponse.getJSONObject("coord").getDouble("lat");
+                    double coordY = jsonResponse.getJSONObject("coord").getDouble("lon");
+
+                    String coordXtxt = (coordX < 0) ? Math.abs(coordX) + "S" : coordX + "N";
+                    String coordYtxt = (coordY < 0) ? Math.abs(coordY) + "W" : coordY + "E";
+
+                    //Print data in terminal
+                    System.out.println("\nWeather in " + cityName + "(" + country + "), " + "(" + coordXtxt + "," + coordYtxt + "):");
+                    System.out.println("\tDescription: " + weatherDescription);
+                    System.out.println("\tTemperature: " + (String.format("%.2f", temperature)) + "°C, feels like " + (String.format("%.2f", tempLike)) + "°C");
+                    System.out.println("\tHumidity: " + humidity + "%");
+
 
                 } else {
                     System.out.println("Error in request. Response code: " + status);
