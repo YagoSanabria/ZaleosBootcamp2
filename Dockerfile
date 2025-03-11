@@ -1,14 +1,13 @@
 FROM openjdk:17-jdk-slim
-
-# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia el archivo .jar de tu aplicación Java al contenedor
-COPY target/weather-api.jar /app/weather-api.jar
+# Copiar el código fuente y la librería JSON
+COPY weather-api/src/WeatherApi.java .
+COPY weather-api/lib/json-lib.jar .
 
-# Expón el puerto donde estará corriendo la API (por ejemplo, el 8080)
-EXPOSE 8080
+# Compilar el código incluyendo la librería externa
+RUN javac -cp json-lib.jar WeatherApi.java
 
-# Comando para ejecutar la aplicación Java
-CMD ["java", "-jar", "/app/weather-api.jar"]
+# Ejecutar el programa con la librería en el classpath
+CMD ["java", "-cp", ".:json-lib.jar", "WeatherApi"]
 
