@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch API",
+      "request": "launch",
+      "mainClass": "SimpleApi",
+      "classPaths": [
+        "API/src"
+      ],
+      "modulePaths": [
+        "API/target"
+      ]
+    }
+  ]
+}
