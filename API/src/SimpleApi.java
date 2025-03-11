@@ -10,24 +10,19 @@ import java.net.InetSocketAddress;
 public class SimpleApi {
 
     public static void main(String[] args) throws IOException {
-        // Crear un servidor HTTP que escucha en el puerto 8080
+
+        //Create http server that listens on port 8080
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         
-        // Definir el manejador para el endpoint GET "/api"
+        //Define handler for GET "/api"
         server.createContext("/api", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
-                
-
-                String uri = exchange.getRequestURI().toString();
-
-                String city = uri.substring(4); //4 is /api length
-
-                System.out.println("City name: " + city);
+                String city = exchange.getRequestURI().toString().substring(4); //4 is /api length
+                System.out.println("\nCity name: " + city);
 
                 //check if city is in db
-
                 File file = new File("../db/" + city + ".json");
 
                 if (!file.exists()) {
@@ -47,8 +42,8 @@ public class SimpleApi {
             }
         });
         
-        // Iniciar el servidor
-        server.setExecutor(null); // Usa el ejecutor predeterminado
+        //Start the server
+        server.setExecutor(null);
         server.start();
 
         System.out.println("Servidor iniciado en http://localhost:8080");
