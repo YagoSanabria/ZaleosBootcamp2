@@ -10,9 +10,11 @@ import org.json.JSONObject;
 public class WeatherApi {
 
     public static void main(String[] args) {
-        String apiKey = "d59cfe8cb6e6d6f23b2eee3625f1e8d2";
+        String apiKey = "a";
         String city = "Madrid";  //Default city
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert apikey: ");
+        apiKey = scanner.nextLine();
         while (true) {
 
             System.out.print("Insert city name (exit to quit): ");
