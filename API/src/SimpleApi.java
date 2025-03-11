@@ -1,6 +1,6 @@
-import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -15,11 +15,23 @@ public class SimpleApi {
         server.createContext("/api", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                String response = "{\"message\": \"¡Hola desde tu API en Java!\"}";
+
+                String uri = exchange.getRequestURI().toString();
+
+                System.out.println(uri);
+
+                uri = uri.substring(4); //4 is /apia length
+
+                System.out.println(uri);
+
+                String response = "{message: \"¡Hola: " + uri + " desde tu API en Java!\"}";
                 exchange.sendResponseHeaders(200, response.getBytes().length);
 
                 OutputStream os = exchange.getResponseBody();
                 os.write(response.getBytes());
+
+                System.out.println("Send response");
+
                 os.close();
             }
         });

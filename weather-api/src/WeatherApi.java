@@ -4,11 +4,81 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-
 import org.json.JSONObject;
 
 public class WeatherApi {
 
+    public static void main(String[] args) {
+        // Usar el API de tu servidor local
+        String apiUrl = "http://localhost:8080/api"; // Cambia esta URL si es necesario
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+
+            System.out.print("\nInsert city or country name (exit to quit): ");
+            String city = scanner.nextLine();
+            String direccion = "";
+
+            if (city.equals("exit")) {
+                break;
+            } else if (city.equals("")) {
+                continue;
+            }else{
+                direccion = apiUrl+city;
+            }
+
+            try {
+
+                System.out.println(direccion);
+                URL url = new URL(direccion);
+
+                // Abrir conexión HTTP
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(5000);  // Timeout de conexión de 5 segundos
+                connection.setReadTimeout(5000);  // Timeout de lectura de 5 segundos
+
+                // Código de respuesta HTTP
+                int status = connection.getResponseCode();
+
+                // Si todo está bien (código 200)
+                if (status == 200) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    System.out.println("Respuesta llega");
+
+
+                    // Aquí se maneja la respuesta JSON de tu API
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+
+                    // Imprimir los datos recibidos de tu API
+                    System.out.println("\nWeather data received from local API:");
+                    System.out.println(jsonResponse.toString(4));  // Imprime el JSON formateado con una indentación de 4 espacios
+
+                } else {
+                    System.out.println("Error in request. Response code: " + status);
+                }
+
+                // Cerrar conexión
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        scanner.close();
+        System.out.println("Exiting program...");
+    }
+
+    /*
     public static void main(String[] args) {
         String apiKey = "a";
         String city = "Madrid";  //Default city
@@ -95,4 +165,5 @@ public class WeatherApi {
         scanner.close();
         System.out.println("Exiting program...");
     }
+    */
 }
