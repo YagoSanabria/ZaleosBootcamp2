@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "weather-api/lib/jfreechart.jar",
+        "weather-api/lib/json-lib.jar"
+    ]
+}
