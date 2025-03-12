@@ -51,7 +51,7 @@ public class SimpleApi {
                 System.out.println("\nCity name: " + city);
 
                 //check if city is in db
-                File file = new File("../db/" + city + ".json");
+                File file = new File("../db/forecast/" + city + ".json");
 
                 if (!file.exists()) {
                     String response = "{Error message: \"" + city + " not found\"}";

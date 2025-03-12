@@ -73,26 +73,31 @@ public class WeatherApi {
                         System.out.println("\tHumidity: " + humidity + "%");
                     } else if (type.equals("forecast")) {
 
-                        /*
-                        System.out.println("Weather Forecast for " + jsonResponse.getJSONObject("city").getString("name") + ", " + jsonResponse.getJSONObject("city").getString("country"));
-                        System.out.println("----------------------------------------------------");
-                        JSONArray forecasts = jsonResponse.getJSONArray("list");
-                        for (int i = 0; i < forecasts.length(); i++) {
-                            JSONObject forecast = forecasts.getJSONObject(i);
-                            String dateTime = forecast.getString("dt_txt");
-                            double temperature = forecast.getJSONObject("main").getDouble("temp") - KELVIN;
-                            double feelsLike = forecast.getJSONObject("main").getDouble("feels_like") - KELVIN;
-                            String weatherMain = forecast.getJSONArray("weather").getJSONObject(0).getString("main");
-                            String weatherDesc = forecast.getJSONArray("weather").getJSONObject(0).getString("description");
-                            double windSpeed = forecast.getJSONObject("wind").getDouble("speed");
-                            System.out.println("Date/Time: " + dateTime);
-                            System.out.println("Temperature: " + String.format("%.2f", temperature) + "°C");
-                            System.out.println("Feels Like: " + String.format("%.2f", feelsLike) + "°C");
-                            System.out.println("Weather: " + weatherMain + " - " + weatherDesc);
-                            System.out.println("Wind Speed: " + windSpeed + " m/s");
-                            System.out.println("----------------------------------------------------");
+                        try {
+                            // Specify the path to your bash script
+                            String scriptPath = "weather-api/src/web.sh";
+
+                            //System.out.println(response.toString());
+                            // Use ProcessBuilder to execute the script
+                            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", scriptPath, response.toString());
+
+                            // Start the process
+                            Process process = processBuilder.start();
+
+                            // Capturar la salida de error
+                            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                            String line;
+                            while ((line = errorReader.readLine()) != null) {
+                                System.out.println("Error: " + line);
+                            }
+
+                            // Wait for the process to complete
+                            int exitCode = process.waitFor();
+                            System.out.println("Script executed with exit code: " + exitCode);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
                         }
-                         */
+
                     }
                 } else {
                     System.out.println("Error in request. Response code: " + status);
