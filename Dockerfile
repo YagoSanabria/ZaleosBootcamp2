@@ -1,9 +1,18 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copiar el código fuente y la librería JSON
 COPY weather-api/src/WeatherApi.java .
 COPY weather-api/lib/json-lib.jar .
+
+COPY weather-api/src/web.sh .
+
+RUN apt-get update && apt-get install -y \
+    jq \
+    curl \
+    firefox-esr \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # Compilar el código incluyendo la librería externa
 RUN javac -cp json-lib.jar WeatherApi.java

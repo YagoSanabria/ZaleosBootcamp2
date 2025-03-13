@@ -73,4 +73,4 @@ EOF
 echo "HTML file generated: $HTML_FILE"
 
 # Open the file in Firefox
-firefox $HTML_FILE
+firefox  $HTML_FILE

@@ -11,7 +11,9 @@ public class WeatherApi {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            String apiUrl = "http://localhost:8080/"; // port 8080
+
+            String apiUrl = "http://192.168.0.231:8080/"; // Usa la IP especial para la máquina host
+            //String apiUrl = "http://localhost:8080/"; // port 8080
 
             System.out.print("\nCurrent weather (api) or forecast (forecast) [exit to quit]: ");
             String type = scanner.nextLine().replaceAll(" ", "").toLowerCase();
@@ -75,7 +77,7 @@ public class WeatherApi {
 
                         try {
                             // Specify the path to your bash script
-                            String scriptPath = "weather-api/src/web.sh";
+                            String scriptPath = "web.sh";
 
                             //System.out.println(response.toString());
                             // Use ProcessBuilder to execute the script

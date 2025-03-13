@@ -12,7 +12,7 @@ public class SimpleApi {
     public static void main(String[] args) throws IOException {
 
         //Create http server that listens on port 8080
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
 
         //Define handler for GET "/api"
         server.createContext("/api/", new HttpHandler() {
