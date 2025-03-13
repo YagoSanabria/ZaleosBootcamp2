@@ -1,1 +1,1 @@
-    sudo docker build -t weather-api .
+sudo docker build -t weather-api .
