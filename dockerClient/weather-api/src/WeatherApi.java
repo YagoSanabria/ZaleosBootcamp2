@@ -179,6 +179,8 @@ public class WeatherApi {
 
             } catch (Exception e) {
                 System.out.println("Error. Algo ha petado");
+                System.out.println("Error message: " + e.getMessage());
+
             }
         }
         scanner.close();

@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+	weather-api:
+		build: .
+		container_name: server
+		ports:
+			- "8080:8080"
+		volumes:
+			- db:/app/db 
+		networks:
+			- custom_network  # This refers to the custom network name
+
+networks:
+	custom_network:  # Defining the custom network
+		driver: bridge  # Using bridge mode for isolated communication
+

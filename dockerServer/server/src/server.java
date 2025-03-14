@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-public class SimpleApi {
+public class server {
 
     public static void main(String[] args) throws IOException {
 
@@ -19,11 +19,11 @@ public class SimpleApi {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
-                String city = exchange.getRequestURI().toString().substring(4); //4 is /api length
+                String city = exchange.getRequestURI().toString().substring(5); //4 is /api length
                 System.out.println("\nCity name: " + city);
 
                 //check if city is in db
-                File file = new File("../db/" + city + ".json");
+                File file = new File("db/" + city + ".json");
 
                 if (!file.exists()) {
                     String response = "{Error message: \"" + city + " not found\"}";
@@ -47,11 +47,11 @@ public class SimpleApi {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
-                String city = exchange.getRequestURI().toString().substring(9); //9 is /forecast length
+                String city = exchange.getRequestURI().toString().substring(10); //9 is /forecast length
                 System.out.println("\nCity name: " + city);
 
                 //check if city is in db
-                File file = new File("../db/forecast/" + city + ".json");
+                File file = new File("db/forecast/" + city + ".json");
 
                 if (!file.exists()) {
                     String response = "{Error message: \"" + city + " not found\"}";
@@ -74,6 +74,6 @@ public class SimpleApi {
         server.setExecutor(null);
         server.start();
 
-        System.out.println("Servidor iniciado en http://localhost:8080");
+        System.out.println("Servidor iniciado en http://192.168.0.231:8080/");
     }
 }
