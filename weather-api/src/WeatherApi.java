@@ -39,6 +39,9 @@ public class WeatherApi {
             }
 
             String direccion = apiUrl + city;
+
+            System.out.println("New uri: " + direccion);
+
             try {
                 URL url = new URL(direccion);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -57,6 +60,10 @@ public class WeatherApi {
                     in.close();
 
                     JSONObject jsonResponse = new JSONObject(response.toString());
+
+                    System.out.println("Response code: " + status);
+
+                    //System.out.println("Response: " + jsonResponse.toString());
                     if (type.equals("api")) {
                         String cityName = jsonResponse.getString("name");
                         String country = jsonResponse.getJSONObject("sys").getString("country");
@@ -69,35 +76,81 @@ public class WeatherApi {
                         String coordXtxt = (coordX < 0) ? Math.abs(coordX) + "S" : coordX + "N";
                         String coordYtxt = (coordY < 0) ? Math.abs(coordY) + "W" : coordY + "E";
 
+                        double windSpeed = jsonResponse.getJSONObject("wind").getDouble("speed");
+                        int windDeg = jsonResponse.getJSONObject("wind").getInt("deg");
+
                         System.out.println("\nWeather in " + cityName + "(" + country + "), (" + coordXtxt + "," + coordYtxt + "):");
                         System.out.println("\tDescription: " + weatherDescription);
                         System.out.println("\tTemperature: " + String.format("%.2f", temperature) + "°C, feels like " + String.format("%.2f", tempLike) + "°C");
                         System.out.println("\tHumidity: " + humidity + "%");
+
+                        String windDirection;
+                        if (windDeg >= 337.5 || windDeg < 22.5) {
+                            windDirection = "N";
+                        } else if (windDeg >= 22.5 && windDeg < 67.5) {
+                            windDirection = "NE";
+                        } else if (windDeg >= 67.5 && windDeg < 112.5) {
+                            windDirection = "E";
+                        } else if (windDeg >= 112.5 && windDeg < 157.5) {
+                            windDirection = "SE";
+                        } else if (windDeg >= 157.5 && windDeg < 202.5) {
+                            windDirection = "S";
+                        } else if (windDeg >= 202.5 && windDeg < 247.5) {
+                            windDirection = "SW";
+                        } else if (windDeg >= 247.5 && windDeg < 292.5) {
+                            windDirection = "W";
+                        } else {
+                            windDirection = "NW";
+                        }
+
+                        System.out.println("\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
                     } else if (type.equals("forecast")) {
 
-                        try {
-                            // Specify the path to your bash script
-                            String scriptPath = "web.sh";
+                        String cityName = jsonResponse.getJSONObject("city").getString("name");
+                        String country = jsonResponse.getJSONObject("city").getString("country");
+                        System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
+                        JSONArray list = jsonResponse.getJSONArray("list");
 
-                            //System.out.println(response.toString());
-                            // Use ProcessBuilder to execute the script
-                            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", scriptPath, response.toString());
+                        for (int i = 1; i < list.length(); i += 2) {
+                            JSONObject day = list.getJSONObject(i);
+                            String date = day.getString("dt_txt");
+                            double temperature = day.getJSONObject("main").getDouble("temp") - KELVIN;
+                            double tempLike = day.getJSONObject("main").getDouble("feels_like") - KELVIN;
+                            double humidity = day.getJSONObject("main").getDouble("humidity");
+                            String weatherDescription = day.getJSONArray("weather").getJSONObject(0).getString("main") + ", " + day.getJSONArray("weather").getJSONObject(0).getString("description");
+                            double windSpeed = day.getJSONObject("wind").getDouble("speed");
+                            int windDeg = day.getJSONObject("wind").getInt("deg");
 
-                            // Start the process
-                            Process process = processBuilder.start();
-
-                            // Capturar la salida de error
-                            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                            String line;
-                            while ((line = errorReader.readLine()) != null) {
-                                System.out.println("Error: " + line);
+                            if (date.endsWith("00:00:00")) {
+                                System.out.println("\n");
                             }
 
-                            // Wait for the process to complete
-                            int exitCode = process.waitFor();
-                            System.out.println("Script executed with exit code: " + exitCode);
-                        } catch (IOException | InterruptedException e) {
-                            e.printStackTrace();
+                            System.out.println("\t" + date + ":");
+                            System.out.println("\t\tDescription: " + weatherDescription);
+                            System.out.println("\t\tTemperature: " + String.format("%.2f", temperature) + "°C, feels like " + String.format("%.2f", tempLike) + "°C");
+                            System.out.println("\t\tHumidity: " + humidity + "%");
+
+                            String windDirection;
+                            if (windDeg >= 337.5 || windDeg < 22.5) {
+                                windDirection = "N";
+                            } else if (windDeg >= 22.5 && windDeg < 67.5) {
+                                windDirection = "NE";
+                            } else if (windDeg >= 67.5 && windDeg < 112.5) {
+                                windDirection = "E";
+                            } else if (windDeg >= 112.5 && windDeg < 157.5) {
+                                windDirection = "SE";
+                            } else if (windDeg >= 157.5 && windDeg < 202.5) {
+                                windDirection = "S";
+                            } else if (windDeg >= 202.5 && windDeg < 247.5) {
+                                windDirection = "SW";
+                            } else if (windDeg >= 247.5 && windDeg < 292.5) {
+                                windDirection = "W";
+                            } else {
+                                windDirection = "NW";
+                            }
+
+                            System.out.println("\t\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
+
                         }
 
                     }
@@ -125,8 +178,7 @@ public class WeatherApi {
                 connection.disconnect();
 
             } catch (Exception e) {
-                System.out.println("Error. Response code: 503");
-                System.out.println("Trying to request to server");
+                System.out.println("Error. Algo ha petado");
             }
         }
         scanner.close();
