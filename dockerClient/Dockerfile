@@ -5,6 +5,7 @@ WORKDIR /app
 COPY weather-api/src/WeatherApi.java .
 COPY weather-api/lib/json-lib.jar .
 
+
 # Compilar el código incluyendo la librería externa
 RUN javac -cp json-lib.jar WeatherApi.java
 
