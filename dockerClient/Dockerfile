@@ -4,7 +4,6 @@ WORKDIR /app
 # Copiar el código fuente y la librería JSON
 COPY weather-api/lib/json-lib.jar .
 COPY weather-api/src/WeatherApi.java .
-COPY . /app/workspace
 
 
 # Compilar el código incluyendo la librería externa
