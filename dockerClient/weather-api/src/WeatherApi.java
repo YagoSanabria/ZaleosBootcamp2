@@ -243,7 +243,7 @@ public class WeatherApi {
                     connection.disconnect();
 
                 } catch (Exception e) {
-                    System.out.println("Error. Algo ha petado");
+                    System.out.println("Impossible to connect to the server.");
                     System.out.println("Error message: " + e.getMessage());
 
                 }
