@@ -15,7 +15,9 @@ public class WeatherApi {
 
         while (true) {
 
-            String apiUrl = "http://192.168.0.231:8080/"; // Usa la IP especial para la máquina host
+            //String apiUrl = "http://192.168.0.231:8080/"; // Usa la IP especial para la máquina host Yago
+            String apiUrl = "http://192.168.0.142:8080/"; // Usa la IP especial para la máquina host Luna
+
             //String apiUrl = "http://localhost:8080/"; // port 8080
 
             System.out.print("\nCurrent weather (api) or forecast (forecast) [exit to quit]: ");
@@ -31,7 +33,7 @@ public class WeatherApi {
                 apiUrl += type + "/";
             }
 
-            System.out.print("\nInsert new weather (upload), view the weather (view) [exit to quit]: ");
+            System.out.print("\nInsert new weather (upload), view the weather (view) or delete a forecast (delete) [exit to quit]: ");
             String method = scanner.nextLine().replaceAll(" ", "").toLowerCase();
             if (method.equals("exit")) {
                 break;
@@ -42,7 +44,45 @@ public class WeatherApi {
 
             System.out.println("New uri: " + apiUrl);
 
-            if (method.equals("upload")) {
+            if (method.equals("delete")) {
+                System.out.print("\nInsert the file name[exit to quit]: ");
+                String filePath = scanner.nextLine();
+                String truePath;
+                if (type.equals("api"))
+                    truePath = "db/" + filePath + ".json";
+                else 
+                    truePath = "db/forecast/" + filePath + ".json";
+
+                System.out.println("New path: " + truePath);
+                try {
+                    System.out.println(apiUrl);
+                    URL url = new URL(apiUrl + "delete?filePath=" + URLEncoder.encode(truePath, StandardCharsets.UTF_8));
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("DELETE");
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    
+                    int status = connection.getResponseCode();
+                    if (status == 200) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String inputLine;
+                        StringBuilder response = new StringBuilder();
+                        
+                        while ((inputLine = in.readLine()) != null) {
+                            response.append(inputLine);
+                        }
+                        in.close();
+                        System.out.println("Respuesta del servidor: " + response);
+                    } else {
+                        System.out.println("Error en la solicitud. Código de respuesta: " + status);
+                    }
+                    
+                    connection.disconnect();
+                } catch (Exception e) {
+                    System.out.println("Error al conectar con el servidor.");
+                    e.printStackTrace();
+                }
+            } else if (method.equals("upload")) {
                 System.out.print("\nInsert the file name[exit to quit]: ");
                 String filePath = scanner.nextLine();
 
