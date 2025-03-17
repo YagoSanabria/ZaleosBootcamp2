@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 	weather-api:
 		build: .
@@ -9,9 +7,9 @@ services:
 		volumes:
 			- db:/app/db 
 		networks:
-			- custom_network  # This refers to the custom network name
+			- custom_network  #Custom network name
 
 networks:
 	custom_network:  # Defining the custom network
-		driver: bridge  # Using bridge mode for isolated communication
+		driver: bridge  #Bridge mode for isolated communication
 

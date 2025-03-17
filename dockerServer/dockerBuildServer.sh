@@ -1,1 +1,1 @@
-    sudo docker build -t server .
+sudo docker build -t server .

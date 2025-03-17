@@ -1,14 +1,14 @@
 FROM openjdk:21-jdk-slim
 WORKDIR /app
 
-# Copiar el código fuente y la librería JSON
+#Copy the files and libraries to the container
 COPY weather-api/lib/json-lib.jar .
 COPY weather-api/src/WeatherApi.java .
 COPY . /app/workspace
 
 
-# Compilar el código incluyendo la librería externa
+#Compiple the java file with the library
 RUN javac -cp json-lib.jar WeatherApi.java
 
-# Ejecutar el programa con la librería en el classpath
+#Run the java file with the library
 CMD ["java", "-cp", ".:json-lib.jar", "WeatherApi"]

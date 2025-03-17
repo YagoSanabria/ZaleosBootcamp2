@@ -1,13 +1,13 @@
 FROM openjdk:21-jdk-slim
 WORKDIR /app
 
-# Copiar el código fuente y la librería JSON
+#Copy the files and libraries to the container
 COPY server/lib/json-lib.jar .
 COPY server/src/server.java .
 COPY db /app/db
 
-# Compilar el código incluyendo la librería externa
+#Compile the server using the external library
 RUN javac -cp json-lib.jar server.java
 
-# Ejecutar el programa con la librería en el classpath
+#Run the server with the external library
 CMD ["java", "-cp", ".:json-lib.jar", "server"]
