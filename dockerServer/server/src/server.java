@@ -21,7 +21,7 @@ public class server {
         //Create http server that listens on port 8080
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
 
-        //Define handler for GET "/api"
+        //Create context for /api/ endpoint
         server.createContext("/api/", new HttpHandler() {
 
             @Override
@@ -38,13 +38,13 @@ public class server {
                         handleDeleteRequestApi(exchange);
                         break;
                     default:
-                        exchange.sendResponseHeaders(405, -1); // Método no permitido
+                        exchange.sendResponseHeaders(405, -1); //Not permitted method
                         break;
                 }
             }
         });
 
-        //Define handler for GET "/forecast"
+        //create context for /forecast/ endpoint
         server.createContext("/forecast/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -60,7 +60,7 @@ public class server {
                         handleDeleteRequestForecast(exchange);
                         break;
                     default:
-                        exchange.sendResponseHeaders(405, -1); // Método no permitido
+                        exchange.sendResponseHeaders(405, -1); //Not permitted method
                         break;
                 }
             }
@@ -71,11 +71,12 @@ public class server {
         server.setExecutor(null);
         server.start();
 
-        System.out.println("Servidor iniciado en http://192.168.0.231:8080/");
+        System.out.println("Server started on port 8080");
     }
 
+    //Handle GET request
     private static void handleGetRequestApi(HttpExchange exchange) throws IOException {
-        String city = exchange.getRequestURI().toString().substring(5); //4 is /api length
+        String city = exchange.getRequestURI().toString().substring(5); //5 is /api/ length
         System.out.println("\nCity name: " + city);
 
         //check if city is in db
@@ -97,6 +98,7 @@ public class server {
         }
     }
 
+    //Handle POST request
     private static void handlePostRequestApi(HttpExchange exchange) throws IOException {
         InputStream inputStream = exchange.getRequestBody();
         String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
@@ -107,7 +109,7 @@ public class server {
             cityName = cityName.replaceAll(" ", "").toLowerCase();
 
             if (cityName.equals("unknown")) {
-                String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
+                String response = "{ \"error\": \"Json doesnt have a valid city name\" }";
                 exchange.sendResponseHeaders(400, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
@@ -115,20 +117,20 @@ public class server {
                 return;
             }
 
-            // Guardar el JSON en un archivo
+            // Save json in file
             String filePath = "db/" + cityName + ".json";
             Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
 
-            String response = "Datos guardados correctamente en " + filePath;
-            System.out.println(response); // Imprimir mensaje en el servidor
+            String response = "Data saved successfully in " + filePath;
+            System.out.println(response);
 
-            // Responder con un simple mensaje de texto
+            //Response with a simple text message
             exchange.sendResponseHeaders(200, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
             }
         } catch (Exception e) {
-            String response = "{ \"error\": \"Error procesando el JSON\" }";
+            String response = "{ \"error\": \"Error processing JSON\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -136,11 +138,12 @@ public class server {
         }
     }
 
+    //Handle DELETE request
     private static void handleDeleteRequestApi(HttpExchange exchange) throws IOException {
-        System.out.println("DELETE request");
+        System.out.println("api DELETE request");
         String query = exchange.getRequestURI().getQuery();
         if (query == null || !query.startsWith("filePath=")) {
-            String response = "{ \"error\": \"No se proporcionó un archivo válido\" }";
+            String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -154,20 +157,21 @@ public class server {
         try {
             if (Files.exists(path)) {
                 Files.delete(path);
-                String response = "Archivo eliminado correctamente: " + filePath;
+                System.out.println("File deleted successfully: " + filePath);
+                String response = "File deleted successfully: " + filePath;
                 exchange.sendResponseHeaders(200, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
                 }
             } else {
-                String response = "{ \"error\": \"El archivo no existe\" }";
+                String response = "{ \"error\": \"File does not exist\" }";
                 exchange.sendResponseHeaders(404, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
                 }
             }
         } catch (IOException e) {
-            String response = "{ \"error\": \"Error al eliminar el archivo\" }";
+            String response = "{ \"error\": \"Error while deleting file\" }";
             exchange.sendResponseHeaders(500, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -175,8 +179,9 @@ public class server {
         }
     }
 
+    //Handle GET request
     private static void handleGetRequestForecast(HttpExchange exchange) throws IOException {
-        String city = exchange.getRequestURI().toString().substring(10); //9 is /forecast length
+        String city = exchange.getRequestURI().toString().substring(10); //10 is /forecast/ length
         System.out.println("\nCity name: " + city);
 
         //check if city is in db
@@ -198,6 +203,7 @@ public class server {
         }
     }
 
+    //Handle POST request
     private static void handlePostRequestForecast(HttpExchange exchange) throws IOException {
         InputStream inputStream = exchange.getRequestBody();
         String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
@@ -212,8 +218,8 @@ public class server {
             System.out.println(cityName);
 
             if (cityName.equals("unknown")) {
-                System.out.println("error nombre archivo");
-                String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
+                System.out.println("error file name");
+                String response = "{ \"error\": \"Json does not have valid city name\" }";
                 exchange.sendResponseHeaders(400, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
@@ -221,17 +227,17 @@ public class server {
                 return;
             }
 
-            // Guardar el JSON en un archivo
+            // Save json in file
             String filePath = "db/forecast/" + cityName + ".json";
 
             System.out.println("filePath: " + filePath);
 
             Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
 
-            String response = "Datos guardados correctamente en " + filePath;
-            System.out.println(response); // Imprimir mensaje en el servidor
+            String response = "Data successfully saved in " + filePath;
+            System.out.println(response);
 
-            // Responder con un simple mensaje de texto
+            //Anwser with a simple text message
             exchange.sendResponseHeaders(200, response.getBytes().length);
 
             try (OutputStream os = exchange.getResponseBody()) {
@@ -239,7 +245,7 @@ public class server {
             }
 
         } catch (Exception e) {
-            String response = "{ \"error\": \"Error procesando el JSON\" }";
+            String response = "{ \"error\": \"error processing json\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -247,11 +253,12 @@ public class server {
         }
     }
 
+    //Handle DELETE request
     private static void handleDeleteRequestForecast(HttpExchange exchange) throws IOException {
-        System.out.println("DELETE request");
+        System.out.println("forecast DELETE request");
         String query = exchange.getRequestURI().getQuery();
         if (query == null || !query.startsWith("filePath=")) {
-            String response = "{ \"error\": \"No se proporcionó un archivo válido\" }";
+            String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -265,20 +272,21 @@ public class server {
         try {
             if (Files.exists(path)) {
                 Files.delete(path);
-                String response = "Archivo eliminado correctamente: " + filePath;
+                System.out.println("File deleted successfully: " + filePath);
+                String response = "File deleted successully " + filePath;
                 exchange.sendResponseHeaders(200, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
                 }
             } else {
-                String response = "{ \"error\": \"El archivo no existe\" }";
+                String response = "{ \"error\": \"File does not exist\" }";
                 exchange.sendResponseHeaders(404, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
                 }
             }
         } catch (IOException e) {
-            String response = "{ \"error\": \"Error al eliminar el archivo\" }";
+            String response = "{ \"error\": \"Error while deleting file\" }";
             exchange.sendResponseHeaders(500, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());

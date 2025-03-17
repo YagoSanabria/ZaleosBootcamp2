@@ -9,17 +9,17 @@ import org.json.*;
 
 public class WeatherApi {
 
-    private static final double KELVIN = 273.15;
-    private static final int TIMEOUT = 5000;
-    private static final String BASE_API_URL = "http://192.168.0.231:8080/"; //Yago ip
+    private static final double KELVIN = 273.15; // Constant to convert Kelvin to Celsius
+    private static final int TIMEOUT = 5000; // Timeout for HTTP connections
+    private static final String BASE_API_URL = "http://192.168.0.231:8080/"; // Base URL for the API
+    //IP Luna: http://192.168.0.142:8080/
+    //IP Yago: http://192.168.0.231:8080/
 
-    //String apiUrl = "http://192.168.0.231:8080/"; // Usa la IP especial para la máquina host Yago
-    //String apiUrl = "http://192.168.0.142:8080/"; // Usa la IP especial para la máquina host Luna
-    //String apiUrl = "http://localhost:8080/"; // port 8080
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            // Get the type of weather data (current or forecast)
             String type = getUserInput(scanner, "Current weather (api) or forecast (forecast) [exit to quit]: ");
             if (type.equals("exit")) {
                 break;
@@ -28,6 +28,7 @@ public class WeatherApi {
                 continue;
             }
 
+            // Get the method to perform (upload, view, or delete)
             String method = getUserInput(scanner, "Insert new weather (upload), view the weather (view) or delete a forecast (delete) [exit to quit]: ");
             if (method.equals("exit")) {
                 break;
@@ -36,6 +37,7 @@ public class WeatherApi {
             String apiUrl = BASE_API_URL + type + "/";
             System.out.println("New URL: " + apiUrl);
 
+            // Handle the chosen method
             switch (method) {
                 case "delete":
                     handleDelete(scanner, apiUrl, type);
@@ -54,11 +56,13 @@ public class WeatherApi {
         System.out.println("Exiting program...");
     }
 
+    // Get user input with a prompt
     private static String getUserInput(Scanner scanner, String prompt) {
         System.out.print(prompt);
         return scanner.nextLine().trim().toLowerCase();
     }
 
+    // Handle delete request
     private static void handleDelete(Scanner scanner, String apiUrl, String type) {
         String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
         if (fileName.equals("exit")) {
@@ -75,6 +79,7 @@ public class WeatherApi {
         }
     }
 
+    // Handle upload request
     private static void handleUpload(Scanner scanner, String apiUrl) {
         String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
         if (fileName.equals("exit")) {
@@ -91,6 +96,7 @@ public class WeatherApi {
         }
     }
 
+    // Handle view request
     private static void handleView(Scanner scanner, String apiUrl, String type) {
         String city = getUserInput(scanner, "Insert city or country name [exit to quit]: ");
         if (city.equals("exit")) {
@@ -108,6 +114,7 @@ public class WeatherApi {
         }
     }
 
+    // Send HTTP request
     private static String sendRequest(URL url, String method) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
@@ -130,6 +137,7 @@ public class WeatherApi {
         return response.toString();
     }
 
+    // Send HTTP POST request
     private static void sendPostRequest(String apiUrl, String jsonData) throws IOException {
         URL url = new URL(apiUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -151,6 +159,7 @@ public class WeatherApi {
         }
     }
 
+    // Parse JSON response
     private static void parseJsonResponse(String response, String type) {
         JSONObject jsonResponse = new JSONObject(response);
         if (type.equals("api")) {
@@ -160,6 +169,7 @@ public class WeatherApi {
         }
     }
 
+    // Parse current weather data
     private static void parseCurrentWeather(JSONObject jsonResponse) {
         String cityName = jsonResponse.getString("name");
         String country = jsonResponse.getJSONObject("sys").getString("country");
@@ -200,9 +210,9 @@ public class WeatherApi {
         }
 
         System.out.println("\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
-
     }
 
+    // Parse weather forecast data
     private static void parseWeatherForecast(JSONObject jsonResponse) {
         String cityName = jsonResponse.getJSONObject("city").getString("name");
         String country = jsonResponse.getJSONObject("city").getString("country");
@@ -248,7 +258,6 @@ public class WeatherApi {
             }
 
             System.out.println("\t\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
-
         }
     }
 }
