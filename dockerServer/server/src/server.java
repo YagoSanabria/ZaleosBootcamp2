@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.json.*;
 
@@ -21,8 +23,12 @@ public class server {
 
         //Define handler for GET "/api"
         server.createContext("/api/", new HttpHandler() {
+
             @Override
             public void handle(HttpExchange exchange) throws IOException {
+                
+                System.out.println("Buenos dias");
+
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String city = exchange.getRequestURI().toString().substring(5); //4 is /api length
                     System.out.println("\nCity name: " + city);
@@ -82,7 +88,44 @@ public class server {
                             os.write(response.getBytes());
                         }
                     }
-                } else {
+                } else if ("DELETE".equals(exchange.getRequestMethod())) {
+                    System.out.println("DELETE request");
+                    String query = exchange.getRequestURI().getQuery();
+                    if (query == null || !query.startsWith("filePath=")) {
+                        String response = "{ \"error\": \"No se proporcionó un archivo válido\" }";
+                        exchange.sendResponseHeaders(400, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                        return;
+                    }
+                    
+                    String filePath = URLDecoder.decode(query.substring(9), StandardCharsets.UTF_8);
+                    Path path = Paths.get(filePath);
+                    
+                    try {
+                        if (Files.exists(path)) {
+                            Files.delete(path);
+                            String response = "Archivo eliminado correctamente: " + filePath;
+                            exchange.sendResponseHeaders(200, response.getBytes().length);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes());
+                            }
+                        } else {
+                            String response = "{ \"error\": \"El archivo no existe\" }";
+                            exchange.sendResponseHeaders(404, response.getBytes().length);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes());
+                            }
+                        }
+                    } catch (IOException e) {
+                        String response = "{ \"error\": \"Error al eliminar el archivo\" }";
+                        exchange.sendResponseHeaders(500, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                    }
+                }else {
                     exchange.sendResponseHeaders(405, -1); // Método no permitido
                 }
 
@@ -162,7 +205,45 @@ public class server {
                         }
                     }
 
-                } else {
+                } else if ("DELETE".equals(exchange.getRequestMethod())) {
+                    System.out.println("DELETE request");
+                    String query = exchange.getRequestURI().getQuery();
+                    if (query == null || !query.startsWith("filePath=")) {
+                        String response = "{ \"error\": \"No se proporcionó un archivo válido\" }";
+                        exchange.sendResponseHeaders(400, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                        return;
+                    }
+                    
+                    String filePath = URLDecoder.decode(query.substring(9), StandardCharsets.UTF_8);
+                    Path path = Paths.get(filePath);
+                    
+                    try {
+                        if (Files.exists(path)) {
+                            Files.delete(path);
+                            String response = "Archivo eliminado correctamente: " + filePath;
+                            exchange.sendResponseHeaders(200, response.getBytes().length);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes());
+                            }
+                        } else {
+                            String response = "{ \"error\": \"El archivo no existe\" }";
+                            exchange.sendResponseHeaders(404, response.getBytes().length);
+                            try (OutputStream os = exchange.getResponseBody()) {
+                                os.write(response.getBytes());
+                            }
+                        }
+                    } catch (IOException e) {
+                        String response = "{ \"error\": \"Error al eliminar el archivo\" }";
+                        exchange.sendResponseHeaders(500, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                    }
+                }else {
+
                     exchange.sendResponseHeaders(405, -1); // Método no permitido
                 }
 
