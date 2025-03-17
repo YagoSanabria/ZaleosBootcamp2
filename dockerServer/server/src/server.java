@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.json.*;
 
 public class server {
 
@@ -45,47 +46,46 @@ public class server {
                     }
                 } else if ("POST".equals(exchange.getRequestMethod())) {
 
-                        InputStream inputStream = exchange.getRequestBody();
-                        String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            
-                        try {
-                            JSONObject json = new JSONObject(jsonText);
-                            String cityName = json.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_-]", "_");
-                            cityName = cityName.replaceAll(" ", "").toLowerCase();
+                    InputStream inputStream = exchange.getRequestBody();
+                    String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-                            if (cityName.equals("unknown")) {
-                                String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
-                                exchange.sendResponseHeaders(400, response.getBytes().length);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes());
-                                }
-                                return;
-                            }
-            
-                            // Guardar el JSON en un archivo
-                            String filePath = "../db/" + cityName + ".json";
-                            Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
-            
-                            String response = "Datos guardados correctamente en " + filePath;
-                            System.out.println(response); // Imprimir mensaje en el servidor
-                    
-                            // Responder con un simple mensaje de texto
-                            exchange.sendResponseHeaders(200, response.getBytes().length);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes());
-                            }
-                        } catch (Exception e) {
-                            String response = "{ \"error\": \"Error procesando el JSON\" }";
+                    try {
+                        JSONObject json = new JSONObject(jsonText);
+                        String cityName = json.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_-]", "_");
+                        cityName = cityName.replaceAll(" ", "").toLowerCase();
+
+                        if (cityName.equals("unknown")) {
+                            String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
                             exchange.sendResponseHeaders(400, response.getBytes().length);
                             try (OutputStream os = exchange.getResponseBody()) {
                                 os.write(response.getBytes());
                             }
+                            return;
                         }
-                    } else {
-                        exchange.sendResponseHeaders(405, -1); // Método no permitido
-                    }
 
-                
+                        // Guardar el JSON en un archivo
+                        String filePath = "db/" + cityName + ".json";
+                        Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
+
+                        String response = "Datos guardados correctamente en " + filePath;
+                        System.out.println(response); // Imprimir mensaje en el servidor
+
+                        // Responder con un simple mensaje de texto
+                        exchange.sendResponseHeaders(200, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                    } catch (Exception e) {
+                        String response = "{ \"error\": \"Error procesando el JSON\" }";
+                        exchange.sendResponseHeaders(400, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                    }
+                } else {
+                    exchange.sendResponseHeaders(405, -1); // Método no permitido
+                }
+
             }
         });
 
@@ -97,10 +97,10 @@ public class server {
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String city = exchange.getRequestURI().toString().substring(10); //9 is /forecast length
                     System.out.println("\nCity name: " + city);
-    
+
                     //check if city is in db
                     File file = new File("db/forecast/" + city + ".json");
-    
+
                     if (!file.exists()) {
                         String response = "{Error message: \"" + city + " not found\"}";
                         exchange.sendResponseHeaders(404, response.getBytes().length);
@@ -115,56 +115,67 @@ public class server {
                         os.write(fileBytes);
                         os.close();
                     }
-                } else if("POST".equals(exchange.getRequestMethod())) {
+                } else if ("POST".equals(exchange.getRequestMethod())) {
 
                     InputStream inputStream = exchange.getRequestBody();
-                        String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                        try {
-                            JSONObject json = new JSONObject(jsonText);
-                            JSONObject city = json.getJSONObject("city");
-                            String cityName = city.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_ -]", "_");
-                            cityName = cityName.replaceAll(" ", "").toLowerCase();
-                            System.out.println(cityName);
-                            if (cityName.equals("unknown")) {
-                                System.out.println("error nombre archivo");
-                                String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
-                                exchange.sendResponseHeaders(400, response.getBytes().length);
-                                try (OutputStream os = exchange.getResponseBody()) {
-                                    os.write(response.getBytes());
-                                }
-                                return;
-                            }
-            
-                            // Guardar el JSON en un archivo
-                            String filePath = "../db/forecast/" + cityName + ".json";
-                            Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
-            
-                            String response = "Datos guardados correctamente en " + filePath;
-                            System.out.println(response); // Imprimir mensaje en el servidor
-                    
-                            // Responder con un simple mensaje de texto
-                            exchange.sendResponseHeaders(200, response.getBytes().length);
-                            try (OutputStream os = exchange.getResponseBody()) {
-                                os.write(response.getBytes());
-                            }
-                        } catch (Exception e) {
-                            String response = "{ \"error\": \"Error procesando el JSON\" }";
+                    String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+                    try {
+                        JSONObject json = new JSONObject(jsonText);
+                        JSONObject city = json.getJSONObject("city");
+                        String cityName = city.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_ -]", "_");
+                        cityName = cityName.replaceAll(" ", "").toLowerCase();
+                        System.out.println(cityName);
+
+                        if (cityName.equals("unknown")) {
+                            System.out.println("error nombre archivo");
+                            String response = "{ \"error\": \"El JSON no contiene un nombre de ciudad válido\" }";
                             exchange.sendResponseHeaders(400, response.getBytes().length);
                             try (OutputStream os = exchange.getResponseBody()) {
                                 os.write(response.getBytes());
                             }
+                            return;
                         }
+
+                        // Guardar el JSON en un archivo
+                        String filePath = "db/forecast/" + cityName + ".json";
+
+                        System.out.println("filePath: " + filePath);
+
+                        Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
+
+                        String response = "Datos guardados correctamente en " + filePath;
+                        System.out.println(response); // Imprimir mensaje en el servidor
+
+                        // Responder con un simple mensaje de texto
+                        exchange.sendResponseHeaders(200, response.getBytes().length);
+
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+
+                    } catch (Exception e) {
+                        String response = "{ \"error\": \"Error procesando el JSON\" }";
+                        exchange.sendResponseHeaders(400, response.getBytes().length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(response.getBytes());
+                        }
+                    }
+
                 } else {
                     exchange.sendResponseHeaders(405, -1); // Método no permitido
                 }
-                
+
             }
-        });
+        }
+        );
 
         //Start the server
-        server.setExecutor(null);
+        server.setExecutor(
+                null);
         server.start();
 
-        System.out.println("Servidor iniciado en http://192.168.0.231:8080/");
+        System.out.println(
+                "Servidor iniciado en http://192.168.0.231:8080/");
     }
 }

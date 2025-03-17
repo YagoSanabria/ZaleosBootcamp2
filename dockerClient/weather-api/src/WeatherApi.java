@@ -38,21 +38,22 @@ public class WeatherApi {
             } else if (method.equals("") || !method.matches("[a-z]+")) {
                 System.out.println("Invalid city or country name. Try again.");
                 continue;
-            } else if (!method.equals("view")) {
-                apiUrl += method;
             }
 
             System.out.println("New uri: " + apiUrl);
 
             if (method.equals("upload")) {
-                System.out.print("\nInsert the path[exit to quit]: ");
+                System.out.print("\nInsert the file name[exit to quit]: ");
                 String filePath = scanner.nextLine();
-                //scanner.close();
 
+                String truePath = "workspace/" + filePath + ".json";
+                System.out.println("New path: " + truePath);
+
+                //scanner.close();
                 // Leer archivo JSON
                 String jsonData;
                 try {
-                    jsonData = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+                    jsonData = new String(Files.readAllBytes(Paths.get(truePath)), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     System.out.println("Error al leer el archivo JSON: " + e.getMessage());
                     return;
@@ -65,20 +66,20 @@ public class WeatherApi {
                     connection.setDoOutput(true);
                     connection.setConnectTimeout(5000);
                     connection.setReadTimeout(5000);
-        
+
                     // Enviar JSON al servidor
                     try (OutputStream os = connection.getOutputStream()) {
                         os.write(jsonData.getBytes());
                         os.flush();
                     }
-        
+
                     // Obtener respuesta del servidor
                     int status = connection.getResponseCode();
                     if (status == 200) {
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         String inputLine;
                         StringBuilder response = new StringBuilder();
-        
+
                         while ((inputLine = in.readLine()) != null) {
                             response.append(inputLine);
                         }
@@ -87,7 +88,7 @@ public class WeatherApi {
                     } else {
                         System.out.println("Error en la solicitud. Código de respuesta: " + status);
                     }
-        
+
                     connection.disconnect();
                 } catch (Exception e) {
                     System.out.println("Error al conectar con el servidor.");
@@ -128,7 +129,6 @@ public class WeatherApi {
 
                         System.out.println("Response code: " + status);
 
-                        //System.out.println("Response: " + jsonResponse.toString());
                         if (type.equals("api")) {
                             String cityName = jsonResponse.getString("name");
                             String country = jsonResponse.getJSONObject("sys").getString("country");
@@ -248,7 +248,7 @@ public class WeatherApi {
 
                 }
             }
-            
+
         }
         scanner.close();
         System.out.println("Exiting program...");
