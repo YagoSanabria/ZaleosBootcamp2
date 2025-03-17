@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Ejecutar el contenedor
-sudo docker run -v $(pwd)/workspace:/app/workspace -it --rm weather-api
+sudo docker run -it --rm weather-api
