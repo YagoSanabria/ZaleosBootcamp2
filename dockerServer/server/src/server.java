@@ -211,9 +211,35 @@ public class server {
         } else {
             System.out.println("Send response from " + city);
             byte[] fileBytes = java.nio.file.Files.readAllBytes(file.toPath());
-            exchange.sendResponseHeaders(200, fileBytes.length);
+
+            // Convertir el archivo leído en un JSONObject
+            String jsonString = new String(fileBytes, StandardCharsets.UTF_8);
+            JSONObject objaux = new JSONObject(jsonString);
+
+            // Obtener el array "list"
+            JSONArray list = objaux.getJSONArray("list");
+
+            // Crear un nuevo JSONArray solo con los elementos que tienen fecha "12:00:00" o "00:00:00"
+            JSONArray filteredList = new JSONArray();
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject weatherItem = list.getJSONObject(i);
+                String dtTxt = weatherItem.getString("dt_txt");
+
+                // Filtrar por "12:00:00" o "00:00:00"
+                if (dtTxt.endsWith("12:00:00") || dtTxt.endsWith("00:00:00")) {
+                    filteredList.put(weatherItem);
+                }
+            }
+
+            // Modificar el objeto objaux para que "list" contenga solo los elementos filtrados
+            objaux.put("list", filteredList);
+
+            // Convertir el objeto JSON filtrado a bytes
+            byte[] filteredBytes = objaux.toString().getBytes(StandardCharsets.UTF_8);
+
+            exchange.sendResponseHeaders(200, filteredBytes.length);
             OutputStream os = exchange.getResponseBody();
-            os.write(fileBytes);
+            os.write(filteredBytes);
             os.close();
         }
     }

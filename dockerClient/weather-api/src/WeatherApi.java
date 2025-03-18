@@ -19,7 +19,23 @@ public class WeatherApi {
         Scanner scanner = new Scanner(System.in);
 
         //print how to use and info
-        System.out.println("Welcome to the Weather API client!");
+        //it is not legible here because we had to scape the characters
+        System.out.println("\n"
+                + "\n"
+                + "╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n"
+                + "║                                                                                                                       ║\n"
+                + "║   █████         █████                     ████     ████                               █████████   ███████████  █████  ║\n"
+                + "║  ░░███         ░░███                     ░░███    ░░███                              ███░░░░░███ ░░███░░░░░███░░███   ║\n"
+                + "║   ░███   ░███   ░███   ██████   ██████   ███████   ░███████    ██████  ████████     ░███    ░███  ░███    ░███ ░███   ║\n"
+                + "║   ░███   ░███   ░███  ███░░███ ░░░░░███ ░░░███░    ░███░░███  ███░░███░░███░░███    ░███████████  ░██████████  ░███   ║\n"
+                + "║   ░░███  █████  ███  ░███████   ███████   ░███     ░███ ░███ ░███████  ░███ ░░░     ░███░░░░░███  ░███░░░░░░   ░███   ║\n"
+                + "║    ░░░█████░█████░   ░███░░░   ███░░███   ░███ ███ ░███ ░███ ░███░░░   ░███         ░███    ░███  ░███         ░███   ║\n"
+                + "║      ░░███ ░░███     ░░██████ ░░████████  ░░█████  ████ █████░░██████  █████        █████   █████ █████        █████  ║\n"
+                + "║       ░░░   ░░░       ░░░░░░   ░░░░░░░░    ░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░        ░░░░░   ░░░░░ ░░░░░        ░░░░░   ║\n"
+                + "║                                                                                                                       ║\n"
+                + "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n"
+                + "\n");
+
         System.out.println("On every step you can type 'exit' to quit the program.");
         System.out.println("You can upload a JSON file with weather data, view the current weather or forecast for a city, or delete a forecast.");
         System.out.println("The JSON file must be in the 'workspace' folder and have the name of the city or country.");
@@ -197,6 +213,7 @@ public class WeatherApi {
         double windSpeed = jsonResponse.getJSONObject("wind").getDouble("speed");
         int windDeg = jsonResponse.getJSONObject("wind").getInt("deg");
 
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
         System.out.println("\nWeather in " + cityName + "(" + country + "), (" + coordXtxt + "," + coordYtxt + "):");
         System.out.println("\tDescription: " + weatherDescription);
         System.out.println("\tTemperature: " + String.format("%.2f", temperature) + "°C, feels like " + String.format("%.2f", tempLike) + "°C");
@@ -222,16 +239,21 @@ public class WeatherApi {
         }
 
         System.out.println("\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
     }
 
     // Parse weather forecast data
     private static void parseWeatherForecast(JSONObject jsonResponse) {
         String cityName = jsonResponse.getJSONObject("city").getString("name");
         String country = jsonResponse.getJSONObject("city").getString("country");
+
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
         System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
         JSONArray list = jsonResponse.getJSONArray("list");
 
-        for (int i = 1; i < list.length(); i += 2) {
+        for (int i = 1; i < list.length(); i++) {
             JSONObject day = list.getJSONObject(i);
             String date = day.getString("dt_txt");
             double temperature = day.getJSONObject("main").getDouble("temp") - KELVIN;
@@ -268,15 +290,17 @@ public class WeatherApi {
             } else {
                 windDirection = "NW";
             }
-
             System.out.println("\t\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
         }
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
     }
 
     // Parse weather forecast data and print a graph
     private static void parsePrintWeather(JSONObject jsonResponse) {
         String cityName = jsonResponse.getJSONObject("city").getString("name");
         String country = jsonResponse.getJSONObject("city").getString("country");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
         System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
         JSONArray list = jsonResponse.getJSONArray("list");
 
@@ -307,7 +331,7 @@ public class WeatherApi {
 
         //Print the graph
         double cloudCount = 100.0;
-        System.out.println("\nTemperature (ºC)    &    Cloudiness Graph (%):\n");
+        System.out.println("Temperature (ºC)    &    Cloudiness Graph (%):\n");
         for (int temp = (int) maxTemp; temp >= minTemp; temp--) {
             System.out.printf("%3d°C |", temp);
             for (int i = 1; i < list.length(); i += 2) {
@@ -337,13 +361,12 @@ public class WeatherApi {
                 System.out.println("|");
             }
         }
-
         //Print dates (2 columns per day)
         System.out.print("      ");
         for (int i = 1; i < list.length(); i += 4) {
             System.out.printf("|%s", dates[i]);
         }
-        System.out.println(" |\n");
+        System.out.println(" |");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
     }
-
 }
