@@ -18,22 +18,32 @@ public class WeatherApi {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        //print how to use and info
+        System.out.println("Welcome to the Weather API client!");
+        System.out.println("On every step you can type 'exit' to quit the program.");
+        System.out.println("You can upload a JSON file with weather data, view the current weather or forecast for a city, or delete a forecast.");
+        System.out.println("The JSON file must be in the 'workspace' folder and have the name of the city or country.");
+
         while (true) {
             // Get the type of weather data (current or forecast)
-            String type = getUserInput(scanner, "Current weather (api) or forecast (forecast) [exit to quit]: ");
+            String type = getUserInput(scanner, "\nCurrent weather (api), forecast (forecast), graph forecast (graph): ");
             if (type.equals("exit")) {
                 break;
-            } else if (!type.equals("api") && !type.equals("forecast")) {
+            } else if (!type.equals("api") && !type.equals("forecast") && !type.equals("graph")) {
                 System.out.println("Invalid type. Try again.");
                 continue;
             }
 
             // Get the method to perform (upload, view, or delete)
-            String method = getUserInput(scanner, "Insert new weather (upload), view the weather (view) or delete a forecast (delete) [exit to quit]: ");
-            if (method.equals("exit")) {
-                break;
+            String method = "";
+            if (type.equals("graph")) { //graph can only be viewed
+                method = "view";
+            } else {
+                method = getUserInput(scanner, "Insert new weather (upload), view the weather (view) or delete a forecast (delete): ");
+                if (method.equals("exit")) {
+                    continue;
+                }
             }
-
             String apiUrl = BASE_API_URL + type + "/";
             System.out.println("New URL: " + apiUrl);
 
@@ -59,7 +69,7 @@ public class WeatherApi {
     // Get user input with a prompt
     private static String getUserInput(Scanner scanner, String prompt) {
         System.out.print(prompt);
-        return scanner.nextLine().trim().toLowerCase();
+        return scanner.nextLine().toLowerCase().replaceAll(" ", "");
     }
 
     // Handle delete request
@@ -98,7 +108,7 @@ public class WeatherApi {
 
     // Handle view request
     private static void handleView(Scanner scanner, String apiUrl, String type) {
-        String city = getUserInput(scanner, "Insert city or country name [exit to quit]: ");
+        String city = getUserInput(scanner, "Insert city or country name: ");
         if (city.equals("exit")) {
             return;
         }
@@ -164,8 +174,10 @@ public class WeatherApi {
         JSONObject jsonResponse = new JSONObject(response);
         if (type.equals("api")) {
             parseCurrentWeather(jsonResponse);
-        } else {
+        } else if (type.equals("forecast")) {
             parseWeatherForecast(jsonResponse);
+        } else if (type.equals("graph")) {
+            parsePrintWeather(jsonResponse);
         }
     }
 
@@ -260,4 +272,78 @@ public class WeatherApi {
             System.out.println("\t\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
         }
     }
+
+    // Parse weather forecast data and print a graph
+    private static void parsePrintWeather(JSONObject jsonResponse) {
+        String cityName = jsonResponse.getJSONObject("city").getString("name");
+        String country = jsonResponse.getJSONObject("city").getString("country");
+        System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
+        JSONArray list = jsonResponse.getJSONArray("list");
+
+        double maxTemp = 30;
+        double minTemp = -2;
+        double[] temperatures = new double[list.length()];
+        int[] cloudiness = new int[list.length()];
+        String[] dates = new String[list.length()];
+
+        for (int i = 1; i < list.length(); i += 2) {
+            JSONObject day = list.getJSONObject(i);
+            String date = day.getString("dt_txt");
+            double temperature = day.getJSONObject("main").getDouble("temp") - KELVIN;
+            int clouds = day.getJSONObject("clouds").getInt("all");
+
+            temperatures[i] = temperature;
+            cloudiness[i] = clouds;
+            dates[i] = date.substring(5, 10);
+
+            if (temperature > maxTemp) {
+                maxTemp = temperature;
+            }
+            if (temperature < minTemp) {
+                minTemp = temperature;
+            }
+
+        }
+
+        //Print the graph
+        double cloudCount = 100.0;
+        System.out.println("\nTemperature (ºC)    &    Cloudiness Graph (%):\n");
+        for (int temp = (int) maxTemp; temp >= minTemp; temp--) {
+            System.out.printf("%3d°C |", temp);
+            for (int i = 1; i < list.length(); i += 2) {
+                if (temp == 0) { //line 0
+                    if ((int) temperatures[i] == temp) {
+                        System.out.print("_\033[91m*\033[0m_");
+                    } else if (cloudiness[i] >= 0 && (cloudiness[i] * 10 / maxTemp) > temp) {
+                        System.out.print("_█_");
+                    } else {
+                        System.out.print("___");
+                    }
+                } else {
+                    if ((int) temperatures[i] == temp) {
+                        System.out.print(" \033[91m*\033[0m ");
+                    } else if (cloudiness[i] >= 0 && temp >= 0 && (cloudiness[i] * 10 / maxTemp) > temp) {
+                        System.out.print(" █ ");
+                    } else {
+                        System.out.print("   ");
+                    }
+                }
+            }
+            if (temp >= 0) {
+                System.out.printf("| %5.2f", cloudCount);
+                System.out.println(" %");
+                cloudCount -= 100 / maxTemp;
+            } else {
+                System.out.println("|");
+            }
+        }
+
+        //Print dates (2 columns per day)
+        System.out.print("      ");
+        for (int i = 1; i < list.length(); i += 4) {
+            System.out.printf("|%s", dates[i]);
+        }
+        System.out.println(" |\n");
+    }
+
 }

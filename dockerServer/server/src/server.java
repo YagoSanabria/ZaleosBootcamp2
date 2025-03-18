@@ -64,8 +64,23 @@ public class server {
                         break;
                 }
             }
-        }
-        );
+        });
+
+        //create context for /print/ endpoint
+        server.createContext("/graph/", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+
+                switch (exchange.getRequestMethod()) {
+                    case "GET":
+                        handleGetRequestPrint(exchange);
+                        break;
+                    default:
+                        exchange.sendResponseHeaders(405, -1); //Not permitted method
+                        break;
+                }
+            }
+        });
 
         //Start the server
         server.setExecutor(null);
@@ -208,14 +223,11 @@ public class server {
         InputStream inputStream = exchange.getRequestBody();
         String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-        System.out.println("HOLAAA");
-
         try {
             JSONObject json = new JSONObject(jsonText);
             JSONObject city = json.getJSONObject("city");
             String cityName = city.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_ -]", "_");
             cityName = cityName.replaceAll(" ", "").toLowerCase();
-            System.out.println(cityName);
 
             if (cityName.equals("unknown")) {
                 System.out.println("error file name");
@@ -294,4 +306,27 @@ public class server {
         }
     }
 
+    //Handle GET request
+    private static void handleGetRequestPrint(HttpExchange exchange) throws IOException {
+        String city = exchange.getRequestURI().toString().substring(7); //7 is /print/ length
+        System.out.println("\nCity name: " + city);
+
+        //check if city is in db
+        File file = new File("db/forecast/" + city + ".json");
+
+        if (!file.exists()) {
+            String response = "{Error message: \"" + city + " not found\"}";
+            exchange.sendResponseHeaders(404, response.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        } else {
+            System.out.println("Send response from " + city);
+            byte[] fileBytes = java.nio.file.Files.readAllBytes(file.toPath());
+            exchange.sendResponseHeaders(200, fileBytes.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(fileBytes);
+            os.close();
+        }
+    }
 }
