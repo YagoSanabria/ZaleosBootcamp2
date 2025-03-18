@@ -1,1 +1,46 @@
-{coord:{lon:116.3972,lat:39.9075},weather:[{id:803,main:Clouds,description:broken clouds,icon:04n}],base:stations,main:{temp:281.09,feels_like:280.52,temp_min:281.09,temp_max:281.09,pressure:1012,humidity:58,sea_level:1012,grnd_level:1007},visibility:10000,wind:{speed:1.44,deg:332,gust:2.54},clouds:{all:77},dt:1741690810,sys:{type:1,id:9609,country:CN,sunrise:1741645973,sunset:1741688179},timezone:28800,id:1816670,name:Beijing,cod:200}
+{
+    "coord": {
+        "lon": 116.3972,
+        "lat": 39.9075
+    },
+    "weather": [
+        {
+            "id": 802,
+            "main": "Clouds",
+            "description": "scattered clouds",
+            "icon": "03d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 285.09,
+        "feels_like": 282.78,
+        "temp_min": 285.09,
+        "temp_max": 285.09,
+        "pressure": 1022,
+        "humidity": 17,
+        "sea_level": 1022,
+        "grnd_level": 1017
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 2.19,
+        "deg": 103,
+        "gust": 2.57
+    },
+    "clouds": {
+        "all": 42
+    },
+    "dt": 1742290810,
+    "sys": {
+        "type": 1,
+        "id": 9609,
+        "country": "CN",
+        "sunrise": 1742250096,
+        "sunset": 1742293411
+    },
+    "timezone": 28800,
+    "id": 1816670,
+    "name": "Beijing",
+    "cod": 200
+}
