@@ -1,1 +1,45 @@
-{coord:{lon:-77.0282,lat:-12.0432},weather:[{id:804,main:Clouds,description:overcast clouds,icon:04n}],base:stations,main:{temp:294.21,feels_like:294.7,temp_min:292.29,temp_max:294.21,pressure:1013,humidity:89,sea_level:1013,grnd_level:987},visibility:7000,wind:{speed:3.09,deg:160},clouds:{all:100},dt:1741690803,sys:{type:2,id:2037860,country:PE,sunrise:1741691503,sunset:1741735476},timezone:-18000,id:3936456,name:Lima,cod:200}
+{
+    "coord": {
+        "lon": -77.0282,
+        "lat": -12.0432
+    },
+    "weather": [
+        {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01n"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 293.65,
+        "feels_like": 294.05,
+        "temp_min": 292.29,
+        "temp_max": 293.65,
+        "pressure": 1013,
+        "humidity": 88,
+        "sea_level": 1013,
+        "grnd_level": 987
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 2.06,
+        "deg": 190
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1742290816,
+    "sys": {
+        "type": 2,
+        "id": 2037860,
+        "country": "PE",
+        "sunrise": 1742296322,
+        "sunset": 1742340011
+    },
+    "timezone": -18000,
+    "id": 3936456,
+    "name": "Lima",
+    "cod": 200
+}

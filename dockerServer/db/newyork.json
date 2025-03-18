@@ -1,1 +1,46 @@
-{coord:{lon:-74.006,lat:40.7143},weather:[{id:800,main:Clear,description:clear sky,icon:01n}],base:stations,main:{temp:279.6,feels_like:278.15,temp_min:277.12,temp_max:281.34,pressure:1010,humidity:66,sea_level:1010,grnd_level:1008},visibility:10000,wind:{speed:2.06,deg:80},clouds:{all:0},dt:1741690515,sys:{type:1,id:4610,country:US,sunrise:1741691637,sunset:1741733891},timezone:-14400,id:5128581,name:New York,cod:200} York.json
+{
+    "coord": {
+        "lon": -74.006,
+        "lat": 40.7143
+    },
+    "weather": [
+        {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01n"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 275.45,
+        "feels_like": 269.92,
+        "temp_min": 273.92,
+        "temp_max": 276.12,
+        "pressure": 1016,
+        "humidity": 67,
+        "sea_level": 1016,
+        "grnd_level": 1015
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 7.72,
+        "deg": 20,
+        "gust": 10.8
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1742290667,
+    "sys": {
+        "type": 1,
+        "id": 4610,
+        "country": "US",
+        "sunrise": 1742295743,
+        "sunset": 1742339139
+    },
+    "timezone": -14400,
+    "id": 5128581,
+    "name": "New York",
+    "cod": 200
+}

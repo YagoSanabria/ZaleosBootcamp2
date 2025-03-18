@@ -1,1 +1,46 @@
-{coord:{lon:18.4232,lat:-33.9258},weather:[{id:800,main:Clear,description:clear sky,icon:01d}],base:stations,main:{temp:297.01,feels_like:297.07,temp_min:296.81,temp_max:298.3,pressure:1018,humidity:62,sea_level:1018,grnd_level:1017},visibility:10000,wind:{speed:4.02,deg:0,gust:7.6},clouds:{all:1},dt:1741691030,sys:{type:2,id:2033665,country:ZA,sunrise:1741668152,sunset:1741713018},timezone:7200,id:3369157,name:Cape Town,cod:200}
+{
+    "coord": {
+        "lon": 18.4232,
+        "lat": -33.9258
+    },
+    "weather": [
+        {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 301.34,
+        "feels_like": 301.82,
+        "temp_min": 300.14,
+        "temp_max": 302.65,
+        "pressure": 1014,
+        "humidity": 50,
+        "sea_level": 1014,
+        "grnd_level": 1012
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 4.02,
+        "deg": 134,
+        "gust": 6.71
+    },
+    "clouds": {
+        "all": 0
+    },
+    "dt": 1742290911,
+    "sys": {
+        "type": 2,
+        "id": 2073005,
+        "country": "ZA",
+        "sunrise": 1742273277,
+        "sunset": 1742317248
+    },
+    "timezone": 7200,
+    "id": 3369157,
+    "name": "Cape Town",
+    "cod": 200
+}

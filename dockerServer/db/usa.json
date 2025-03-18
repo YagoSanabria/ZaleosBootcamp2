@@ -1,1 +1,44 @@
-{coord:{lon:-98.5,lat:39.76},weather:[{id:800,main:Clear,description:clear sky,icon:01n}],base:stations,main:{temp:284.12,feels_like:282.26,temp_min:284.12,temp_max:284.12,pressure:1004,humidity:38,sea_level:1004,grnd_level:942},visibility:10000,wind:{speed:7.45,deg:17,gust:14.87},clouds:{all:0},dt:1741691176,sys:{country:US,sunrise:1741697488,sunset:1741739794},timezone:-18000,id:6252001,name:United States of America,cod:200}
+{
+    "coord": {
+        "lon": -98.5,
+        "lat": 39.76
+    },
+    "weather": [
+        {
+            "id": 801,
+            "main": "Clouds",
+            "description": "few clouds",
+            "icon": "02n"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 284.33,
+        "feels_like": 282.63,
+        "temp_min": 284.33,
+        "temp_max": 284.33,
+        "pressure": 999,
+        "humidity": 43,
+        "sea_level": 999,
+        "grnd_level": 938
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 3.23,
+        "deg": 205,
+        "gust": 4.09
+    },
+    "clouds": {
+        "all": 23
+    },
+    "dt": 1742291107,
+    "sys": {
+        "country": "US",
+        "sunrise": 1742301613,
+        "sunset": 1742345023
+    },
+    "timezone": -18000,
+    "id": 6252001,
+    "name": "United States of America",
+    "cod": 200
+}

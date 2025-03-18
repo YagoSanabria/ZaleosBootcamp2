@@ -1,1 +1,46 @@
-{coord:{lon:10.7461,lat:59.9127},weather:[{id:600,main:Snow,description:light snow,icon:13d}],base:stations,main:{temp:274.01,feels_like:272.03,temp_min:274.01,temp_max:275.51,pressure:1005,humidity:82,sea_level:1005,grnd_level:980},visibility:1197,wind:{speed:1.74,deg:52,gust:3.45},snow:{1h:0.12},clouds:{all:100},dt:1741690316,sys:{type:2,id:2094972,country:NO,sunrise:1741671946,sunset:1741712909},timezone:3600,id:3143244,name:Oslo,cod:200}
+{
+    "coord": {
+        "lon": 10.7461,
+        "lat": 59.9127
+    },
+    "weather": [
+        {
+            "id": 804,
+            "main": "Clouds",
+            "description": "overcast clouds",
+            "icon": "04d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 278.13,
+        "feels_like": 278.13,
+        "temp_min": 278.13,
+        "temp_max": 278.13,
+        "pressure": 1023,
+        "humidity": 40,
+        "sea_level": 1023,
+        "grnd_level": 998
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 0.89,
+        "deg": 231,
+        "gust": 1.79
+    },
+    "clouds": {
+        "all": 87
+    },
+    "dt": 1742291031,
+    "sys": {
+        "type": 2,
+        "id": 46775,
+        "country": "NO",
+        "sunrise": 1742275477,
+        "sunset": 1742318733
+    },
+    "timezone": 3600,
+    "id": 3143244,
+    "name": "Oslo",
+    "cod": 200
+}
