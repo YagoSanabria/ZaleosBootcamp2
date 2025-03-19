@@ -44,7 +44,7 @@ public class WeatherApi {
 
             System.out.println("\nWhat do you want to do?");
             String method = "";
-            method = getUserInput(scanner, "\tInsert new weather info (upload), view weather (view) or delete (delete): ");
+            method = getUserInput(scanner, "\tView weather (view), insert new weather info (upload), or delete (delete): ");
             if (method.equals("exit")) {
                 break;
             } else if (!method.equals("upload") && !method.equals("view") && !method.equals("delete")) {
@@ -54,7 +54,7 @@ public class WeatherApi {
 
             while (true) {//method loop
 
-                // Get the type of weather data (current or forecast)
+                // Get the type of weather data (current, forecast or graph)
                 String type = getUserInput(scanner, "\n\tCurrent weather (api), forecast (forecast)" + (method.equals("view") ? ", or graph (graph): " : ": "));
                 if (type.equals("exit")) {
                     break;
@@ -127,7 +127,7 @@ public class WeatherApi {
 
     // Handle view request
     private static void handleView(Scanner scanner, String apiUrl, String type) {
-        String city = getUserInput(scanner, "\n\tInsert city or country name: ");
+        String city = getUserInput(scanner, "\n\tInsert location name: ");
         if (city.equals("exit")) {
             return;
         }
@@ -152,7 +152,8 @@ public class WeatherApi {
 
         int status = connection.getResponseCode();
         if (status != 200) {
-            System.out.println("Error: Response code " + status);
+            System.out.println("\nError: Response code " + status);
+            System.out.println("Error message: " + connection.getResponseMessage());
             return null;
         }
 
@@ -184,7 +185,8 @@ public class WeatherApi {
         if (status == 200) {
             System.out.println("Upload successful.");
         } else {
-            System.out.println("Error: Response code " + status);
+            System.out.println("\nError: Response code " + status);
+            System.out.println("Error message: " + connection.getResponseMessage());
         }
     }
 

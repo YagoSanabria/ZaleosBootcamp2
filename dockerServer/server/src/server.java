@@ -99,6 +99,7 @@ public class server {
         File file = new File("db/" + city + ".json");
 
         if (!file.exists()) {
+            System.out.println("City not found: " + city);
             String response = "{Error message: \"" + city + " not found\"}";
             exchange.sendResponseHeaders(404, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
@@ -160,8 +161,8 @@ public class server {
     //Handle DELETE request
     private static void handleDeleteRequestApi(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
-        System.out.println("\nApi delete request | location name: " + query);
-        if (query == null || !query.startsWith("filePath=")) {
+        System.out.println("\nApi delete request | " + query);
+        if (query == null || !query.startsWith("filePath=") || !query.matches("filePath=[a-zA-Z0-9_/]+\\.json")) {
             System.out.println("Not valid filepath: " + query);
             String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
@@ -210,6 +211,7 @@ public class server {
         File file = new File("db/forecast/" + city + ".json");
 
         if (!file.exists()) {
+            System.out.println("City not found: " + city);
             String response = "{Error message: \"" + city + " not found\"}";
             exchange.sendResponseHeaders(404, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
@@ -303,9 +305,9 @@ public class server {
     //Handle DELETE request
     private static void handleDeleteRequestForecast(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
-        System.out.println("\nForecast delete request | location name: " + query);
+        System.out.println("\nForecast delete request | " + query);
 
-        if (query == null || !query.startsWith("filePath=")) {
+        if (query == null || !query.startsWith("filePath=") || !query.matches("filePath=[a-zA-Z0-9_/]+\\.json")) {
             System.out.println("Not valid filepath: " + query);
             String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
@@ -354,6 +356,7 @@ public class server {
         File file = new File("db/forecast/" + city + ".json");
 
         if (!file.exists()) {
+            System.out.println("City not found: " + city);
             String response = "{Error message: \"" + city + " not found\"}";
             exchange.sendResponseHeaders(404, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
