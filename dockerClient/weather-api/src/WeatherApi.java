@@ -19,51 +19,70 @@ public class WeatherApi {
         Scanner scanner = new Scanner(System.in);
 
         //print how to use and info
-        System.out.println("Welcome to the Weather API client!");
+        //it is not legible here because we had to scape the characters
+        System.out.println("\n"
+                + "\n"
+                + "╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n"
+                + "║                                                                                                                       ║\n"
+                + "║   █████         █████                     ████     ████                               █████████   ███████████  █████  ║\n"
+                + "║  ░░███         ░░███                     ░░███    ░░███                              ███░░░░░███ ░░███░░░░░███░░███   ║\n"
+                + "║   ░███   ░███   ░███   ██████   ██████   ███████   ░███████    ██████  ████████     ░███    ░███  ░███    ░███ ░███   ║\n"
+                + "║   ░███   ░███   ░███  ███░░███ ░░░░░███ ░░░███░    ░███░░███  ███░░███░░███░░███    ░███████████  ░██████████  ░███   ║\n"
+                + "║   ░░███  █████  ███  ░███████   ███████   ░███     ░███ ░███ ░███████  ░███ ░░░     ░███░░░░░███  ░███░░░░░░   ░███   ║\n"
+                + "║    ░░░█████░█████░   ░███░░░   ███░░███   ░███ ███ ░███ ░███ ░███░░░   ░███         ░███    ░███  ░███         ░███   ║\n"
+                + "║      ░░███ ░░███     ░░██████ ░░████████  ░░█████  ████ █████░░██████  █████        █████   █████ █████        █████  ║\n"
+                + "║       ░░░   ░░░       ░░░░░░   ░░░░░░░░    ░░░░░  ░░░░ ░░░░░  ░░░░░░  ░░░░░        ░░░░░   ░░░░░ ░░░░░        ░░░░░   ║\n"
+                + "║                                                                                                                       ║\n"
+                + "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝\n"
+                + "\n");
+
         System.out.println("On every step you can type 'exit' to quit the program.");
         System.out.println("You can upload a JSON file with weather data, view the current weather or forecast for a city, or delete a forecast.");
         System.out.println("The JSON file must be in the 'workspace' folder and have the name of the city or country.");
 
-        while (true) {
-            // Get the type of weather data (current or forecast)
-            String type = getUserInput(scanner, "\nCurrent weather (api), forecast (forecast), graph forecast (graph): ");
-            if (type.equals("exit")) {
+        while (true) {//program loop
+
+            System.out.println("\nWhat do you want to do?");
+            String method = "";
+            method = getUserInput(scanner, "\tView weather (view), insert new weather info (upload), or delete (delete): ");
+            if (method.equals("exit")) {
                 break;
-            } else if (!type.equals("api") && !type.equals("forecast") && !type.equals("graph")) {
+            } else if (!method.equals("upload") && !method.equals("view") && !method.equals("delete")) {
                 System.out.println("Invalid type. Try again.");
                 continue;
             }
 
-            // Get the method to perform (upload, view, or delete)
-            String method = "";
-            if (type.equals("graph")) { //graph can only be viewed
-                method = "view";
-            } else {
-                method = getUserInput(scanner, "Insert new weather (upload), view the weather (view) or delete a forecast (delete): ");
-                if (method.equals("exit")) {
+            while (true) {//method loop
+
+                // Get the type of weather data (current, forecast or graph)
+                String type = getUserInput(scanner, "\n\tCurrent weather (api), forecast (forecast)" + (method.equals("view") ? ", or graph (graph): " : ": "));
+                if (type.equals("exit")) {
+                    break;
+                } else if (!type.equals("api") && !type.equals("forecast") && !type.equals("graph")) {
+                    System.out.println("Invalid type. Try again.");
                     continue;
                 }
-            }
-            String apiUrl = BASE_API_URL + type + "/";
-            System.out.println("New URL: " + apiUrl);
 
-            // Handle the chosen method
-            switch (method) {
-                case "delete":
-                    handleDelete(scanner, apiUrl, type);
-                    break;
-                case "upload":
-                    handleUpload(scanner, apiUrl);
-                    break;
-                case "view":
-                    handleView(scanner, apiUrl, type);
-                    break;
-                default:
-                    System.out.println("Invalid method. Try again.");
+                String apiUrl = BASE_API_URL + type;
+
+                // Handle the chosen method
+                switch (method) {
+                    case "delete":
+                        handleDelete(scanner, apiUrl, type);
+                        break;
+                    case "upload":
+                        handleUpload(scanner, apiUrl);
+                        break;
+                    case "view":
+                        handleView(scanner, apiUrl, type);
+                        break;
+                    default:
+                        System.out.println("Invalid method. Try again.");
+                }
             }
         }
         scanner.close();
-        System.out.println("Exiting program...");
+        System.out.println("\nExiting program...");
     }
 
     // Get user input with a prompt
@@ -74,7 +93,7 @@ public class WeatherApi {
 
     // Handle delete request
     private static void handleDelete(Scanner scanner, String apiUrl, String type) {
-        String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
+        String fileName = getUserInput(scanner, "\n\tInsert the file name: ");
         if (fileName.equals("exit")) {
             return;
         }
@@ -91,13 +110,13 @@ public class WeatherApi {
 
     // Handle upload request
     private static void handleUpload(Scanner scanner, String apiUrl) {
-        String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
+        String fileName = getUserInput(scanner, "\n\tInsert the file name: ");
         if (fileName.equals("exit")) {
             return;
         }
 
         String filePath = "workspace/" + fileName + ".json";
-        System.out.println("Uploading: " + filePath);
+        System.out.println("\nUploading: " + filePath);
         try {
             String jsonData = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
             sendPostRequest(apiUrl, jsonData);
@@ -108,13 +127,13 @@ public class WeatherApi {
 
     // Handle view request
     private static void handleView(Scanner scanner, String apiUrl, String type) {
-        String city = getUserInput(scanner, "Insert city or country name: ");
+        String city = getUserInput(scanner, "\n\tInsert location name: ");
         if (city.equals("exit")) {
             return;
         }
 
         try {
-            URL url = new URL(apiUrl + city);
+            URL url = new URL(apiUrl + "?" + city);
             String response = sendRequest(url, "GET");
             if (response != null) {
                 parseJsonResponse(response, type);
@@ -133,7 +152,8 @@ public class WeatherApi {
 
         int status = connection.getResponseCode();
         if (status != 200) {
-            System.out.println("Error: Response code " + status);
+            System.out.println("\nError: Response code " + status);
+            System.out.println("Error message: " + connection.getResponseMessage());
             return null;
         }
 
@@ -165,7 +185,8 @@ public class WeatherApi {
         if (status == 200) {
             System.out.println("Upload successful.");
         } else {
-            System.out.println("Error: Response code " + status);
+            System.out.println("\nError: Response code " + status);
+            System.out.println("Error message: " + connection.getResponseMessage());
         }
     }
 
@@ -197,6 +218,7 @@ public class WeatherApi {
         double windSpeed = jsonResponse.getJSONObject("wind").getDouble("speed");
         int windDeg = jsonResponse.getJSONObject("wind").getInt("deg");
 
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
         System.out.println("\nWeather in " + cityName + "(" + country + "), (" + coordXtxt + "," + coordYtxt + "):");
         System.out.println("\tDescription: " + weatherDescription);
         System.out.println("\tTemperature: " + String.format("%.2f", temperature) + "°C, feels like " + String.format("%.2f", tempLike) + "°C");
@@ -222,16 +244,21 @@ public class WeatherApi {
         }
 
         System.out.println("\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
     }
 
     // Parse weather forecast data
     private static void parseWeatherForecast(JSONObject jsonResponse) {
         String cityName = jsonResponse.getJSONObject("city").getString("name");
         String country = jsonResponse.getJSONObject("city").getString("country");
+
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
         System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
         JSONArray list = jsonResponse.getJSONArray("list");
 
-        for (int i = 1; i < list.length(); i += 2) {
+        for (int i = 1; i < list.length(); i++) {
             JSONObject day = list.getJSONObject(i);
             String date = day.getString("dt_txt");
             double temperature = day.getJSONObject("main").getDouble("temp") - KELVIN;
@@ -268,15 +295,17 @@ public class WeatherApi {
             } else {
                 windDirection = "NW";
             }
-
             System.out.println("\t\tWind speed: " + windSpeed + " m/s" + "(" + windDirection + ")");
         }
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
     }
 
     // Parse weather forecast data and print a graph
     private static void parsePrintWeather(JSONObject jsonResponse) {
         String cityName = jsonResponse.getJSONObject("city").getString("name");
         String country = jsonResponse.getJSONObject("city").getString("country");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
+
         System.out.println("\nWeather forecast in " + cityName + "(" + country + "):");
         JSONArray list = jsonResponse.getJSONArray("list");
 
@@ -307,7 +336,7 @@ public class WeatherApi {
 
         //Print the graph
         double cloudCount = 100.0;
-        System.out.println("\nTemperature (ºC)    &    Cloudiness Graph (%):\n");
+        System.out.println("Temperature (ºC)    &    Cloudiness Graph (%):\n");
         for (int temp = (int) maxTemp; temp >= minTemp; temp--) {
             System.out.printf("%3d°C |", temp);
             for (int i = 1; i < list.length(); i += 2) {
@@ -337,13 +366,12 @@ public class WeatherApi {
                 System.out.println("|");
             }
         }
-
         //Print dates (2 columns per day)
         System.out.print("      ");
         for (int i = 1; i < list.length(); i += 4) {
             System.out.printf("|%s", dates[i]);
         }
-        System.out.println(" |\n");
+        System.out.println(" |");
+        System.out.println("\n══════════════════════════════════════════════════════════════════════");
     }
-
 }
