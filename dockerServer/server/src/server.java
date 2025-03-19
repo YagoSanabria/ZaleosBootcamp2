@@ -22,7 +22,7 @@ public class server {
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
 
         //Create context for /api/ endpoint
-        server.createContext("/api/", new HttpHandler() {
+        server.createContext("/api", new HttpHandler() {
 
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -45,7 +45,7 @@ public class server {
         });
 
         //create context for /forecast/ endpoint
-        server.createContext("/forecast/", new HttpHandler() {
+        server.createContext("/forecast", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
@@ -67,7 +67,7 @@ public class server {
         });
 
         //create context for /print/ endpoint
-        server.createContext("/graph/", new HttpHandler() {
+        server.createContext("/graph", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
 
@@ -91,8 +91,9 @@ public class server {
 
     //Handle GET request
     private static void handleGetRequestApi(HttpExchange exchange) throws IOException {
-        String city = exchange.getRequestURI().toString().substring(5); //5 is /api/ length
-        System.out.println("\nCity name: " + city);
+        String city = exchange.getRequestURI().getQuery();
+
+        System.out.println("\nApi get request | location name: " + city);
 
         //check if city is in db
         File file = new File("db/" + city + ".json");
@@ -118,10 +119,13 @@ public class server {
         InputStream inputStream = exchange.getRequestBody();
         String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
+        System.out.print("\nApi post request |");
         try {
             JSONObject json = new JSONObject(jsonText);
             String cityName = json.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_-]", "_");
             cityName = cityName.replaceAll(" ", "").toLowerCase();
+
+            System.out.println(" json name: " + cityName);
 
             if (cityName.equals("unknown")) {
                 String response = "{ \"error\": \"Json doesnt have a valid city name\" }";
@@ -155,9 +159,10 @@ public class server {
 
     //Handle DELETE request
     private static void handleDeleteRequestApi(HttpExchange exchange) throws IOException {
-        System.out.println("api DELETE request");
         String query = exchange.getRequestURI().getQuery();
+        System.out.println("\nApi delete request | location name: " + query);
         if (query == null || !query.startsWith("filePath=")) {
+            System.out.println("Not valid filepath: " + query);
             String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -179,6 +184,7 @@ public class server {
                     os.write(response.getBytes());
                 }
             } else {
+                System.out.println("File does not exist: " + filePath);
                 String response = "{ \"error\": \"File does not exist\" }";
                 exchange.sendResponseHeaders(404, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
@@ -186,6 +192,7 @@ public class server {
                 }
             }
         } catch (IOException e) {
+            System.out.println("Error while deleting file: " + filePath);
             String response = "{ \"error\": \"Error while deleting file\" }";
             exchange.sendResponseHeaders(500, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -196,8 +203,8 @@ public class server {
 
     //Handle GET request
     private static void handleGetRequestForecast(HttpExchange exchange) throws IOException {
-        String city = exchange.getRequestURI().toString().substring(10); //10 is /forecast/ length
-        System.out.println("\nCity name: " + city);
+        String city = exchange.getRequestURI().getQuery();
+        System.out.println("\nForecast get request | location name: " + city);
 
         //check if city is in db
         File file = new File("db/forecast/" + city + ".json");
@@ -249,11 +256,15 @@ public class server {
         InputStream inputStream = exchange.getRequestBody();
         String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
+        System.out.print("\nForecast post request |");
+
         try {
             JSONObject json = new JSONObject(jsonText);
             JSONObject city = json.getJSONObject("city");
             String cityName = city.optString("name", "unknown").replaceAll("[^a-zA-Z0-9_ -]", "_");
             cityName = cityName.replaceAll(" ", "").toLowerCase();
+
+            System.out.println(" json name: " + cityName);
 
             if (cityName.equals("unknown")) {
                 System.out.println("error file name");
@@ -268,11 +279,9 @@ public class server {
             // Save json in file
             String filePath = "db/forecast/" + cityName + ".json";
 
-            System.out.println("filePath: " + filePath);
-
             Files.write(Paths.get(filePath), jsonText.getBytes(StandardCharsets.UTF_8));
 
-            String response = "Data successfully saved in " + filePath;
+            String response = "Data saved successfully in " + filePath;
             System.out.println(response);
 
             //Anwser with a simple text message
@@ -293,9 +302,11 @@ public class server {
 
     //Handle DELETE request
     private static void handleDeleteRequestForecast(HttpExchange exchange) throws IOException {
-        System.out.println("forecast DELETE request");
         String query = exchange.getRequestURI().getQuery();
+        System.out.println("\nForecast delete request | location name: " + query);
+
         if (query == null || !query.startsWith("filePath=")) {
+            System.out.println("Not valid filepath: " + query);
             String response = "{ \"error\": \"Not valid filepath\" }";
             exchange.sendResponseHeaders(400, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -317,6 +328,7 @@ public class server {
                     os.write(response.getBytes());
                 }
             } else {
+                System.out.println("File does not exist: " + filePath);
                 String response = "{ \"error\": \"File does not exist\" }";
                 exchange.sendResponseHeaders(404, response.getBytes().length);
                 try (OutputStream os = exchange.getResponseBody()) {
@@ -324,6 +336,7 @@ public class server {
                 }
             }
         } catch (IOException e) {
+            System.out.println("Error while deleting file: " + filePath);
             String response = "{ \"error\": \"Error while deleting file\" }";
             exchange.sendResponseHeaders(500, response.getBytes().length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -334,8 +347,8 @@ public class server {
 
     //Handle GET request
     private static void handleGetRequestPrint(HttpExchange exchange) throws IOException {
-        String city = exchange.getRequestURI().toString().substring(7); //7 is /print/ length
-        System.out.println("\nCity name: " + city);
+        String city = exchange.getRequestURI().getQuery();
+        System.out.println("\nGraph get request | location name: " + city);
 
         //check if city is in db
         File file = new File("db/forecast/" + city + ".json");

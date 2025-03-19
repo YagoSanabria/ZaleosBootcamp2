@@ -40,46 +40,49 @@ public class WeatherApi {
         System.out.println("You can upload a JSON file with weather data, view the current weather or forecast for a city, or delete a forecast.");
         System.out.println("The JSON file must be in the 'workspace' folder and have the name of the city or country.");
 
-        while (true) {
-            // Get the type of weather data (current or forecast)
-            String type = getUserInput(scanner, "\nCurrent weather (api), forecast (forecast), graph forecast (graph): ");
-            if (type.equals("exit")) {
+        while (true) {//program loop
+
+            System.out.println("\nWhat do you want to do?");
+            String method = "";
+            method = getUserInput(scanner, "\tInsert new weather info (upload), view weather (view) or delete (delete): ");
+            if (method.equals("exit")) {
                 break;
-            } else if (!type.equals("api") && !type.equals("forecast") && !type.equals("graph")) {
+            } else if (!method.equals("upload") && !method.equals("view") && !method.equals("delete")) {
                 System.out.println("Invalid type. Try again.");
                 continue;
             }
 
-            // Get the method to perform (upload, view, or delete)
-            String method = "";
-            if (type.equals("graph")) { //graph can only be viewed
-                method = "view";
-            } else {
-                method = getUserInput(scanner, "Insert new weather (upload), view the weather (view) or delete a forecast (delete): ");
-                if (method.equals("exit")) {
+            while (true) {//method loop
+
+                // Get the type of weather data (current or forecast)
+                String type = getUserInput(scanner, "\n\tCurrent weather (api), forecast (forecast)" + (method.equals("view") ? ", or graph (graph): " : ": "));
+                if (type.equals("exit")) {
+                    break;
+                } else if (!type.equals("api") && !type.equals("forecast") && !type.equals("graph")) {
+                    System.out.println("Invalid type. Try again.");
                     continue;
                 }
-            }
-            String apiUrl = BASE_API_URL + type + "/";
-            System.out.println("New URL: " + apiUrl);
 
-            // Handle the chosen method
-            switch (method) {
-                case "delete":
-                    handleDelete(scanner, apiUrl, type);
-                    break;
-                case "upload":
-                    handleUpload(scanner, apiUrl);
-                    break;
-                case "view":
-                    handleView(scanner, apiUrl, type);
-                    break;
-                default:
-                    System.out.println("Invalid method. Try again.");
+                String apiUrl = BASE_API_URL + type;
+
+                // Handle the chosen method
+                switch (method) {
+                    case "delete":
+                        handleDelete(scanner, apiUrl, type);
+                        break;
+                    case "upload":
+                        handleUpload(scanner, apiUrl);
+                        break;
+                    case "view":
+                        handleView(scanner, apiUrl, type);
+                        break;
+                    default:
+                        System.out.println("Invalid method. Try again.");
+                }
             }
         }
         scanner.close();
-        System.out.println("Exiting program...");
+        System.out.println("\nExiting program...");
     }
 
     // Get user input with a prompt
@@ -90,7 +93,7 @@ public class WeatherApi {
 
     // Handle delete request
     private static void handleDelete(Scanner scanner, String apiUrl, String type) {
-        String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
+        String fileName = getUserInput(scanner, "\n\tInsert the file name: ");
         if (fileName.equals("exit")) {
             return;
         }
@@ -107,13 +110,13 @@ public class WeatherApi {
 
     // Handle upload request
     private static void handleUpload(Scanner scanner, String apiUrl) {
-        String fileName = getUserInput(scanner, "Insert the file name [exit to quit]: ");
+        String fileName = getUserInput(scanner, "\n\tInsert the file name: ");
         if (fileName.equals("exit")) {
             return;
         }
 
         String filePath = "workspace/" + fileName + ".json";
-        System.out.println("Uploading: " + filePath);
+        System.out.println("\nUploading: " + filePath);
         try {
             String jsonData = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
             sendPostRequest(apiUrl, jsonData);
@@ -124,13 +127,13 @@ public class WeatherApi {
 
     // Handle view request
     private static void handleView(Scanner scanner, String apiUrl, String type) {
-        String city = getUserInput(scanner, "Insert city or country name: ");
+        String city = getUserInput(scanner, "\n\tInsert city or country name: ");
         if (city.equals("exit")) {
             return;
         }
 
         try {
-            URL url = new URL(apiUrl + city);
+            URL url = new URL(apiUrl + "?" + city);
             String response = sendRequest(url, "GET");
             if (response != null) {
                 parseJsonResponse(response, type);
